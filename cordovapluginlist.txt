@@ -1,0 +1,64 @@
+sudo cordova plugin remove com.darktalker.cordova.screenshot
+sudo cordova plugin add com.darktalker.cordova.screenshot OK
+
+sudo cordova plugin remove cordova-android-support-v4 ????
+sudo cordova plugin add cordova-android-support-v4 ?????
+
+sudo cordova plugin remove cordova-plugin-console
+sudo cordova plugin add cordova-plugin-console OK
+
+sudo cordova plugin remove cordova-plugin-device
+sudo cordova plugin add cordova-plugin-device OK
+
+sudo cordova plugin remove cordova-plugin-dialogs
+sudo cordova plugin add cordova-plugin-dialogs OK
+
+sudo cordova plugin remove cordova-plugin-email
+sudo cordova plugin add cordova-plugin-email OK
+
+
+sudo cordova plugin remove cordova-plugin-media
+sudo cordova plugin add cordova-plugin-media Ok
+
+depend de media sudo cordova plugin remove cordova-plugin-file
+depend de media sudo cordova plugin add cordova-plugin-file
+
+sudo cordova plugin remove cordova-plugin-camera
+sudo cordova plugin add cordova-plugin-camera OK
+
+sudo cordova plugin remove cordova-plugin-geolocation OK
+sudo cordova plugin add cordova-plugin-geolocation OK
+
+sudo cordova plugin remove cordova-plugin-inappbrowser
+sudo cordova plugin add cordova-plugin-inappbrowser Ok
+
+sudo cordova plugin remove cordova-plugin-network-information
+sudo cordova plugin add cordova-plugin-network-information OK 
+
+sudo cordova plugin remove cordova-plugin-screen-orientation
+sudo cordova plugin add cordova-plugin-screen-orientation -> marche plus ios
+
+sudo cordova plugin remove cordova-plugin-splashscreen
+sudo cordova plugin add cordova-plugin-splashscreen Ok
+
+sudo cordova plugin remove cordova-plugin-statusbar
+sudo cordova plugin add cordova-plugin-statusbar OK
+//sudo cordova plugin add https://github.com/apache/cordova-plugin-statusbar.git
+
+sudo cordova plugin remove cordova-plugin-vibration
+sudo cordova plugin add cordova-plugin-vibration OK
+
+sudo cordova plugin remove cordova-plugin-whitelist
+sudo cordova plugin add cordova-plugin-whitelist OK
+
+sudo cordova plugin remove phonegap-plugin-push 
+sudo cordova plugin add phonegap-plugin-push --variable SENDER_ID=709890538034 OK
+
+
+sudo cordova plugin remove cordova-plugin-globalization
+sudo cordova plugin add cordova-plugin-globalization OK
+
+
+sudo cordova plugin remove cordova-plugin-settings-hook
+sudo cordova plugin add cordova-plugin-settings-hook OK
+

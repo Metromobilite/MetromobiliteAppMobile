@@ -1,0 +1,37 @@
+cordova plugin add com.darktalker.cordova.screenshot
+
+cordova plugin add cordova-android-support-v4
+
+cordova plugin add cordova-plugin-console
+
+cordova plugin add cordova-plugin-device
+
+cordova plugin add cordova-plugin-dialogs
+
+cordova plugin add cordova-plugin-email
+
+cordova plugin add cordova-plugin-media
+
+cordova plugin add cordova-plugin-camera 
+
+cordova plugin add cordova-plugin-geolocation
+
+cordova plugin add cordova-plugin-inappbrowser 
+
+cordova plugin add cordova-plugin-network-information  
+
+cordova plugin add cordova-plugin-screen-orientation 
+
+cordova plugin add cordova-plugin-splashscreen 
+
+cordova plugin add cordova-plugin-statusbar 
+
+cordova plugin add cordova-plugin-vibration 
+
+cordova plugin add cordova-plugin-whitelist 
+
+cordova plugin add phonegap-plugin-push --variable SENDER_ID=709890538034 
+
+cordova plugin add cordova-plugin-globalization 
+
+cordova plugin add cordova-plugin-settings-hook 
