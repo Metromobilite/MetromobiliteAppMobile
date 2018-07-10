@@ -1,0 +1,33 @@
+L'application mobile Métromobilité, c'est l'application transport de l'agglomération Grenobloise
+
+Run with Cordova 6.1.1 (see https://cordova.apache.org/docs/en/latest/) and the following plugins :
+
+com.darktalker.cordova.screenshot 0.1.5 "Screenshot"
+cordova-android-support-v4 4.0.0 "Android Support v4" 
+cordova-plugin-camera 2.1.0 "Camera" 
+cordova-plugin-console 1.0.2 "Console" 
+cordova-plugin-device 1.1.1 "Device" 
+cordova-plugin-dialogs 1.2.0 "Notification" 
+cordova-plugin-email 1.1.0 "EmailComposer" 
+cordova-plugin-file 4.1.0 "File" 
+cordova-plugin-geolocation 2.1.0 "Geolocation" 
+cordova-plugin-inappbrowser 1.2.1 "InAppBrowser" 
+cordova-plugin-media 1.0.0 "Media" 
+cordova-plugin-network-information 1.2.0 "Network Information" 
+cordova-plugin-screen-orientation 1.4.0 "Screen Orientation" 
+cordova-plugin-splashscreen 3.1.0 "Splashscreen" 
+cordova-plugin-statusbar 2.1.0 "StatusBar" 
+cordova-plugin-vibration 2.1.0 "Vibration" 
+cordova-plugin-whitelist 1.2.1 "Whitelist" 
+phonegap-plugin-push 1.5.3 "PushPlugin" 
+
+
+3 plateforms supported : 
+- iOS available on : itms-apps://itunes.apple.com/fr/app/domainsicle-domain-name-search/idid966169282?ls=1&mt=8 
+- Android available on : market://details?id=org.lametro.metromobilite 
+- Windows Phone available on : https://www.microsoft.com/fr-fr/store/apps/metromobilite/9nblggh1jp80 
+
+
+For any question please contact : contact@metromobilite.fr
+
+Web : www.metromobilite.fr
