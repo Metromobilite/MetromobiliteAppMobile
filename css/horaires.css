@@ -1,0 +1,573 @@
+/*
+// Metromobilité is the mobile application of Grenoble Alpes Métropole <http://www.metromobilite.fr/>.
+// It provides all the information and services for your travels in Grenoble agglomeration.
+// Available for Android, iOs, Windows Phone, it's been developed on Cordova https://cordova.apache.org/.
+
+// Copyright (C) 2013
+// Contributors:
+//	NB/VT - sully-group - www.sully-group.fr - initialisation and implementation
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#mainViewStatique{
+	bottom: 0;
+	position: absolute;
+	top: 0;
+	width:100%;
+	background-color : #f5f5f5;
+}
+#wait {
+	display:none;
+	position: absolute;
+	top: 60%;
+	left: 60%;
+	z-index: 1002;
+}
+@media (min-width: 1200px) {
+	#mainViewStatique {
+		padding-left: 25%;
+		padding-left: calc(25% + 10px);
+	}
+}
+@media (min-width: 992px) and (max-width: 1200px) {
+	#mainViewStatique {
+		padding-left: 34%;
+		padding-left: calc(33.3333% + 10px);
+	}
+}
+@media (min-width: 768px) and (max-width: 991px) {
+	#mainViewStatique {
+		padding-left: 52%;
+		padding-left: calc(50% + 10px);
+	}
+}
+@media (max-width: 767px) {
+	#mainViewStatique {
+		padding-left:10px;
+	}
+	#wait {
+		top: 45%;
+		left: 45%;
+	}	
+}
+@media (min-width: 1200px) {
+	.main { 	top: 141px;	}
+}
+@media (max-width: 1199px) {
+	.main { 	top: 91px;	}
+}
+@font-face {
+	font-family: "GothamRounded-Medium";
+	src: local("GothamRounded-Medium");
+	src: url('../img/GothamRounded-Medium.eot');
+	src: url('../img/GothamRounded-Medium.eot?#iefix') format('embedded-opentype'),
+		 url('../img/GothamRounded-Medium.woff') format('woff'),
+         url('../img/GothamRounded-Medium.ttf') format('truetype'),
+		 url('../img/GothamRounded-Medium.svg#GothamRounded-Medium') format('svg'),
+		 url("../img/GothamRounded-Medium.otf") format("opentype");
+}
+body {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+a, a:visited, a:focus, a:active, a:hover{
+    outline:0 none !important;
+	text-decoration:none;
+}
+.attenteCurseur {
+	cursor:progress!important;
+}
+
+.navbar {
+	margin-bottom: 0px;
+}
+.main {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+}
+.main > .row {
+	height:100%;
+}
+#menu {
+	float:left;
+	background-color:transparent;
+	width:30px;
+	height:30px;
+	line-height:40px;
+	position:absolute;
+	top:0px;
+	left:0px;
+	z-index:50;
+	padding-left: 15px;
+	cursor:pointer;
+}
+#menu span {
+	margin-top:0px;
+}
+#menu.listeAffichee {
+	left:0px;
+	background-color:rgba(30,30,30,0);
+	top:0px;
+	display:none!important;
+}
+#menuListe {
+	margin-right:5px;
+	cursor:pointer;
+}
+#menuListe, #menu { color:#000; }
+#panel {
+	background-color:transparent;
+}
+#listeMain {
+	position:relative;
+	height:100%;
+	width:100%;
+}
+#listeTop {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	line-height: 40px;
+	height: 40px;
+	padding: 0 15px !important;
+}
+@media (min-width: 768px) {
+	#listeTop {
+		background-color:rgba(30, 30, 30, 0.9);
+	}
+}
+#listeLignes {
+	/*position:absolute;*/
+	top:40px;
+	bottom:50px;
+	overflow-y:auto;
+	height: 90%;
+	height: calc(100% - 40px);
+	position: relative;
+	background-color: rgba(30, 30, 30, 0.9);
+}
+#listeLignes.withPub {
+	height: 100%;
+	height:calc(100% - 85px);
+}
+#listeLignes > div{
+	padding-left:5px;
+}
+#centre {
+	position:relative;
+	height:calc(100% - 40px);	
+}
+.svgLigne .logo {
+    height: 30px;
+	width:30px;
+}
+.svgLigne .logoRect {
+    height: 30px;
+	width:60px;
+}
+.svgLigne  {
+    line-height: 10px;
+	padding: 0 0 0 3px;
+}
+
+#liste {
+	color: #fff;
+	background-color:rgba(30,30,30,1);
+	float:left;
+	position:absolute;
+	top:0px;
+	left:0;
+	height:100%;
+	display:block;
+	width:100%;
+	margin-right: auto;
+	margin-left: auto;
+	z-index:51;
+	
+}
+#listeMain {
+	position:relative;
+	height:100%;
+	width:100%;
+}
+#listeLignes {
+	top:0px;
+}
+#listeLignes > div{
+	padding-left:5px;
+}
+
+#listeLignes .svgLigne .logo {
+	height: 50px;
+	width:50px;
+}
+#listeLignes .svgLigne .logoRect {
+	height: 50px;
+	width:100px;
+}
+.svgLigne  {
+	line-height: 10px;
+	padding: 0 0 0 3px;
+}
+#liste .svgLigne:hover, #liste .svgLigne:active, #liste .svgLigne:focus {
+	text-decoration:none;
+}
+#liste .titreReseau {
+	background-color:#646464;
+	color: #fff;
+	cursor: default;
+}
+#liste .titreReseau  h4{
+	margin-bottom:0px;
+	margin-top:4px;
+}
+#liste .TRAM, #liste .CHRONO, #liste .PROXIMO, #liste .FLEXO, #liste .C38 {
+	padding:10px 0 10px 0;
+}
+
+#horairesOnglets {
+	height:35px;
+	display: -webkit-box; 
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: -webkit-flex; 
+	display:flex;
+	margin-top:5px;
+}
+#horairesOnglets > div {
+	display:inline-block;
+	cursor:pointer;
+	height:35px;
+	border-color: #a0a0a0 #a0a0a0 #fff;
+	border-style: solid;
+	border-width: 0px;
+	box-shadow: 0 3px 0px 0px white,0px 0px 3px #000;
+	margin-right:3px;
+	z-index:4;
+	position:relative;
+	background-color:#fff;
+	padding: 0px 5px;
+	min-width:60px;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	display: inline-flex;
+	justify-content: center;
+	font-family: "Helvetica", "Arial", sans-serif;
+	font-size: 16px;
+	font-stretch: condensed;
+	font-weight:bold;
+	line-height:35px;
+	opacity:0.35;
+}
+
+#horairesOnglets > div.active {
+	margin-bottom: -1px;
+	z-index:9;
+	opacity:1;
+	justify-content:center;
+	align-items:center;
+}
+#horairesOnglets > div .numLigne {
+	display:inline-block;
+	font-size:23px;
+	flex: 0 0 auto;
+}
+#horairesOnglets > div .modeLigne {
+	width:30px;
+	height:35px;
+	display:inline-block;
+	flex: 0 0 30px;
+}
+#horairesOnglets > div .bookmark {
+	flex: 0 0 25px;
+	margin:0px;
+}
+#horaires {
+	position: relative;
+	height: 80%;
+	height: calc(100% - 76px);
+	padding-top:3px;
+	border: 0px solid #a0a0a0;
+	border-top-color: #fff;
+	/*border-bottom-left-radius: 0px;*/
+	box-shadow: 0px 0px 3px #000;
+	z-index:5;
+	padding-left:0px;
+	text-align: left;
+	background-color:#fff;
+	word-wrap: break-word;
+}
+#horaires > div {
+	display:none;
+}
+#horaires > div:nth-child(1) {
+	display:block;
+}
+
+#horaires > div, #horaires > div > div {
+	position: relative;
+	height:100%;
+	overflow-y:auto;
+}
+#horaires > div.ligne div.direction {
+	display:none;
+}
+#horaires > div.ligne div.direction.active {
+	display:block;
+}
+#horaires .tableau .contenu {
+    display: flex;
+    justify-content: flex-start;
+    /*align-items: center;*/
+    /*flex-wrap: wrap;*/
+    flex-direction: column;
+    /*height: 100%;*/
+    width: 100%;
+	/*overflow-y:auto;*/
+}
+#titreHoraires{
+	margin-left: 30px;
+	font-family: "GothamRounded-Medium", "Arial", "Helvetica", sans-serif;
+	visibility: hidden;
+}
+#horaires * {
+	font-size:12px;
+}
+#horaires .navHoraires {
+	display:flex;
+	flex-direction: row;
+	align-items:flex-start;
+	justify-content: flex-start;
+}
+#horaires .boutonDirection {
+	display: flex;
+	flex-direction: row;
+	align-items:center;
+	height: 45px;
+}
+#horaires .boutonDirection > span{
+	margin-left:3px;
+}
+
+#horaires .boutonsHoraires {
+	padding: 2px 0px;
+}
+#horaires .btn-horaires{
+	padding:0px;
+	width:36px;
+	height:36px;
+	margin: 2px;
+	border-radius: 18px;
+}
+/*.btn-horaires {
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.15);
+}
+.btn-horaires:hover {
+    color: #fff;
+    background-color: #A5A5A5;
+}*/
+.btn-horaires.active, .btn-horaires:active {
+	background-color: #C0C0C0;
+	box-shadow: none;
+}
+.btn-horaires:focus {
+    background-color: #C0C0C0;
+}
+/*.boutonsHoraires svg{
+	fill:#000;
+}*/
+/*.btn-horaires.active:focus {
+	background-color: #171717;
+}
+.btn-horaires.active svg, .btn-horaires:active svg{
+	fill:#e6e6e6;
+}*/
+.btn-horaires.ficheHoraireEvenement svg {
+	fill:#c62828;
+	margin-top:2px;
+}
+#horaires  .cellEvenement{
+	max-width:450px;
+	width:100%;
+	box-shadow: 0px 0px 3px #000;
+	margin :15px 0px;
+	padding:5px;
+	width:calc(100% - 10px);
+}
+#dates {
+	z-index:10;
+	padding:0px;
+	padding-top: 2px;
+	text-align: center;
+}
+#dates .input-group-addon, #dates input {
+	border-radius:0px;
+}
+.datepicker {
+	z-index: 1052;
+}
+
+#datepickerStatique, #timepickerStatique {
+	display: inline-table!important;
+	width:46vw;
+	max-width:172px;
+	position: relative;
+}
+#timepickerStatique .picker-switch { 
+	position: absolute;
+	left: 40%;
+	bottom: 5px;
+}
+
+#horairesTextStatique, #horairesTextFlexo {
+	font-family: "GothamRounded-Medium", "Arial", "Helvetica", sans-serif;
+	font-weight: bold;
+	padding-bottom: 20px;
+}
+
+#datepickerStatique > input {
+	padding:3px;
+}
+.form-control.datepicker-readonly {
+	cursor: pointer;
+}
+.logoRssFav {
+	margin-left: 8px;
+	width: 10px;
+}
+.rss {
+	display: inline;
+	white-space: normal;
+	text-align: right;
+}
+#horaires table{
+	-webkit-box-sizing: inherit; 
+	-moz-box-sizing: inherit;    
+	box-sizing: inherit;         
+	border:0px;
+	font-size:12px;
+	box-shadow: 0px 0px 5px #000;
+}
+#horaires table tbody{
+    border-bottom: 1px solid #aaa;
+    border-top: 1px solid #c0c0c0;
+	-webkit-box-sizing: inherit; 
+	-moz-box-sizing: inherit;    
+	box-sizing: inherit;	  
+}
+#horaires table thead,#horaires table caption {
+ 	width:100%;
+    height:2em;
+    -webkit-box-sizing: inherit; 
+	-moz-box-sizing: inherit;    
+	box-sizing: inherit;
+        
+}
+#horaires table caption {
+    border-left: 1px solid #aaa;
+    border-right: 1px solid #aaa;
+    line-height: 2em;
+    padding-left: 0.5em;
+    text-align: left;
+}
+#horaires table thead td{
+	border-right:0px;
+	width:265px;
+	height:20px;
+}
+#horaires table tr{
+	height:2em;
+	width:100%;
+	border-top: 1px solid #c0c0c0;
+}
+#horaires table tbody td{
+	padding : 0.4em 0.1em 0.1em 0.1em;
+	vertical-align: middle;
+	text-align: center;
+	width: 50px;
+	height: 12px;
+}
+/*#horaires table tr:nth-child(even){
+	background-color:#e0e0e0;
+}
+#horaires table tr:nth-child(odd){
+	background-color:#fff;
+}*/
+#horaires table tbody  tr:hover, .highlightLigne{
+	background-color:#5bc2f7!important;
+	color:#000;
+}
+#horaires table tr td:nth-child(3){
+	padding-left:5px;
+}
+/*#horaires table tr.tempsreel {
+	font-weight:bold;
+}
+#horaires table tr.tempsreel .libdir {
+	color:#a86200;
+}
+#horaires table tr.tempsreel td:nth-child(2){
+	background-color:#fd952f;
+}
+#horaires table tr.tempsreel td:nth-child(3){
+	background-color:#a0a0a0;
+}
+#horaires table tr.tempsreel td:nth-child(4){
+	background-color:#b0b0b0;
+}
+#horaires table tr.tempsreel td:nth-child(5){
+	background-color:#c0c0c0;
+}
+#horaires table tr.tempsreel td:nth-child(6){
+	background-color:#d0d0d0;
+}
+#horaires table tr.tempsreel td:nth-child(7){
+	background-color:white;
+}
+#horaires table td:nth-child(3){
+	padding-left:5px;
+}*/
+#horaires table tbody td:first-child {
+    text-align: left;
+	width:325px;
+	text-overflow:clip;
+}
+
+.rondhoraire{
+	border-right: 2px solid black;
+	text-align: right !important;
+	width : 14px!important;
+}
+.highlightLigne .rondhoraire  > div{
+	background-color: #f00;
+}
+.highlightLigne .glyphicon-screenshot {
+	display:inline-block!important;
+	cursor:pointer;
+}
+
+.rondhoraire > div{
+	border :  2px solid black;
+	border-radius : 6px;
+	width : 12px;
+	height : 12px;
+	margin-right: -8px;
+	display: inline-block;
+	background-color: #fff;
+}

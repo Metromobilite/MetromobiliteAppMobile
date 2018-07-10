@@ -1,0 +1,41 @@
+/*prochainsPassages et horaires*/
+@media (min-width: 768px) {
+	#mainView, #mainViewStatique {
+		padding-left:410px;
+	}
+	#liste {
+		max-width: 400px;
+	}
+}
+@media (max-width: 767px) {
+	#mainView, #mainViewStatique {
+		padding-left:0px;
+	}
+	#liste {
+		width: 100%;
+	}
+}
+/*prochainsPassages*/
+#listeLignes { 
+	height:100%;
+	top:0px;
+}
+#centre {
+	height:100%;
+}
+#timesyncPP {
+	top:60%;
+}
+/* horaires */
+#horairesOnglets .bookmark {
+	display:none;
+}
+/*#wait {
+	display:none;
+	position: absolute;
+	top: 45%;
+	left: 45%;
+	width: 32px;
+	margin:auto;
+	z-index: 1002;
+}*/

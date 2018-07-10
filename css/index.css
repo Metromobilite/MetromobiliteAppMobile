@@ -1,0 +1,1900 @@
+/*
+// Metromobilité is the mobile application of Grenoble Alpes Métropole <http://www.metromobilite.fr/>.
+// It provides all the information and services for your travels in Grenoble agglomeration.
+// Available for Android, iOs, Windows Phone, it's been developed on Cordova https://cordova.apache.org/.
+
+// Copyright (C) 2013
+// Contributors:
+//	NB/VT - sully-group - www.sully-group.fr - initialisation and implementation
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+* {
+	-webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+}
+@font-face {
+	font-family: 'GothamRounded-Medium';
+
+	src: url('../img/GothamRounded-Medium.woff') format('woff'), url('../img/GothamRounded-Medium.ttf') format('truetype'), url('../img/GothamRounded-Medium.eot?#iefix') format('embedded-opentype'),url('../img/GothamRounded-Medium.svg#GothamRounded-Medium') format('svg');
+}
+body {
+	-webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+	-webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+	-webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+	background-color:#000;
+	background-attachment:fixed;
+	font-family:'HelveticaNeue-Light', 'HelveticaNeue', 'Helvetica', 'Arial', 'sans-serif';
+	font-size:14px;
+	height:100%;
+	width:100%;
+	position:absolute;
+}
+
+/* pour garder le bouton menu meme en grand */
+@media (min-width: 768px) {
+	.navbar-header
+	{
+		float: none;
+	}
+	.navbar-toggle
+	{
+		display: block;
+	}
+	.navbar-collapse.collapse
+	{
+		display: none !important;
+	}
+	.navbar-collapse.collapse.in
+	{
+		display: block !important;
+	}
+	.navbar-nav>li {
+		float: none!important;
+	}
+}
+.navbar {
+	margin-bottom:0px!important;
+	border:0px!important;
+}
+#mainNav .navbar-brand {
+	padding-left: 5px;
+	padding-right: 50px;
+	max-width: 90%;
+	max-width: calc(100% - 37px);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color:#fff;
+}
+#mainNav  .navbar-collapse.collapse.in {
+	max-height: 520px;
+}
+#mainNav .text, #about_link2, #param_link2, #alerte_link2 {
+	font-family: "GothamRounded-Medium",Arial,Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+	color:#fff;
+	font-size:14px;
+	margin-left: 5px;
+}
+#mainNav  span.menuLogo svg {
+	width: 28px;
+	height: 28px;
+	display:inline-block;
+	vertical-align:middle;
+}
+#about_link2:hover, #param_link2:hover, #alerte_link2:hover {
+	color: #b0c92b!important;
+}
+
+#about_link2 .glyphicon, #param_link2 .glyphicon,  #alerte_link2 .glyphicon{
+	font-size:24px;
+}
+
+#about_link2 .about_text, #param_link2 .about_text, #alert_link2 .about_text {
+	vertical-align: super;
+}
+#navPrev {
+	line-height: 44px;
+	padding-right: 16px;
+	padding-left: 10px;
+	margin-top: -15px;
+	margin-bottom: -15px;
+}
+.navbar-toggle {
+	border: 0px;
+	margin: 8px 0px;
+	padding-right: 5px;
+	border-radius: 0px;
+}
+
+button#buttonMenuNav.navbar-inverse, button#buttonMenuNav.navbar-toggle, button#buttonMenuNav.navbar-toggle:hover {
+	background-color: #000;
+}
+
+#mainNav .navbar-collapse {
+	border-top-width: 0px;
+	-webkit-box-shadow: inset 0 0px 0 rgba(255,255,255,.1); */
+}
+
+#buttonMenuNav span.glyphicon {
+	color: #fff;
+    font-size: 16px;
+}
+.couleur_voiture:hover svg, .couleur_voiture:hover span {
+	color: #e00f7e!important;
+	opacity:0.9;
+}
+.couleur_velo:hover svg, .couleur_velo:hover span {
+	color: #b0c73a!important;
+	opacity:0.9;
+}
+.couleur_tc:hover svg, .couleur_tc:hover > span{
+	color: #e55b2c!important;
+	opacity:0.9;
+}
+.couleur_conseil:hover svg, .couleur_conseil:hover span {
+	color:#8334a7!important;
+	opacity:0.9;
+}
+.couleur_horairesTR:hover svg, .couleur_horairesTR:hover span {
+	color:#edd80a!important;
+	opacity:0.9;
+}
+.couleur_horaires:hover svg, .couleur_horaires:hover span {
+	color:#009fd6!important;
+	opacity:0.9;
+}
+#rowHoraires > ul {
+	/*background-color: rgba(30, 30, 30, 1);*/
+	background-color: #000;
+	/*position: absolute;
+	z-index: 52;NB*/
+	position:relative;
+	width: 100%;
+
+}
+#rowHoraires .nav-tabs > li.active > a {
+	background-color: transparent;
+}
+#rowHoraires > div {
+	padding-top: 15px;/*42px;*/
+	top: 0;
+	position: relative;/*NB*/
+}
+.nav-tabs {
+border-bottom-color:transparent;
+}
+#rowHoraires .nav-tabs > li.active > a:hover, #rowHoraires .nav-tabs > li.active > a {
+	background-color: transparent;
+}
+#rowHoraires .nav > li {
+	text-align: center;
+}
+.nav-tabs>li.active>a {
+	color:#b0c73a;
+	font-family:"GothamRounded-Medium";
+	border-color:transparent;
+	background-color: #000;
+}
+
+.nav-tabs>li.active>a::after {
+	content: "";
+	display: block;
+	position: absolute;
+	left: 0%;
+	right: 0%;
+	bottom: 0px;
+	border-color: #b0c73a;
+	border-width: 2px;
+	border-style: solid;
+}
+
+#rowHoraires .nav-tabs>li.active>a {
+	color: #f59a05!important;
+}
+
+#rowHoraires .nav-tabs>li.active>a::after {
+	border-color: #f59a05!important;
+}
+
+#rowHoraires .nav-tabs>li.active>a .iconeSVGFill, #rowHoraires .nav-tabs>li.active>a .iconeSVGFill {
+	fill:#f59a05!important;
+}
+
+/*#rowAlertes .nav-tabs>li.active>a #alerte_link .iconeSVGFill {
+	fill:#ff0000!important;
+}*/
+
+.nav-tabs>li.active:hover>a {
+	border-color:transparent;
+}
+.nav-tabs>li>a {
+	color:#000;
+	border-radius:0px;
+	font-family:"GothamRounded-Medium";
+	border-color:transparent;
+}
+svg.logo {
+	height: 30px;
+	width:30px;
+}
+svg.logoRect {
+	height: 30px;
+	width:60px;
+}
+svg.logoSmall {
+	cursor:default;
+	height: 24px;
+	width:24px;
+}
+svg.logoRectSmall {
+	height: 24px;
+	width:48px;
+}
+.svgLigne  {
+	line-height: 10px;
+	padding: 0 0 0 3px;
+}
+#liste .svgLigne:hover, #liste .svgLigne:active, #liste .svgLigne:focus {
+	text-decoration:none;
+}
+#mainApp {
+	position: relative;
+	height:100%;
+	padding-top:50px;
+	width:100%;
+	background-color:#000;
+}
+#mainApp > .row {
+	min-height:100%;
+	background-color:#fff;
+}
+
+#mainFrameMessageAlerte {
+	background-color:transparent;
+	position: absolute;
+	top:0px;
+	bottom: 0px;
+	left: 0px;
+	width: 100%;
+	z-index: 9999;
+}
+#iconAlerte, #iconAlerteFond {
+	position: absolute;
+	margin: 5px;
+	right: 10px;
+	z-index: 10000;
+	width: 30px;
+}
+#iconAlerteFond {
+    float: right;
+    position: relative;
+    visibility: hidden;
+	margin-top: 0px;
+	margin-right: 0px;
+}
+.iconAlerteFondAnimation{
+	width: 100%!important;
+	visibility: visible!important;
+	position: absolute!important;
+	min-height: 100%!important;
+	right: 0!important;
+}
+#rowMessageAlerte, #rowMessageAlerteFond {
+    margin-top: 50px;
+	max-height:80%;
+	font-weight: bold;
+	font-size: 18px;
+    padding: 5px;
+	text-align: left;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+#rowMessageAlerte > span {
+    position: relative;
+	/*top: 10px;
+	left: 10px;*/
+	
+}
+#mainApp .nav-tabs{
+text-align: -webkit-center;
+}
+#rowAccueil {
+	height: 100%;
+	background-color:#000!important;
+}
+#rowAccueil > span{
+	display:block;
+	vertical-align:middle;
+}
+#rowAccueil .titre, #mainNav .titreLogo > span{
+	font-family: "GothamRounded-Medium",Arial,Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+	color:#fff;
+	font-size:20px;
+}
+#rowAccueil .titre span{
+	margin-left: 25px;
+}
+#mainNav {
+	background-color: #000;
+}
+#mainNav .logo{
+	height:50px;
+}
+#rowHoraires {
+	position:relative;
+}
+#rowAtmo > * {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+#rowAtmo button {
+	margin-bottom: 10px;
+	margin-top: 10px;
+	margin-right: 10px;
+	font-weight: bold;
+}
+#dateHeure, #titrePicDePolDemain, #titrePicDePolDemain {
+	font-weight: bold;
+}
+#updateAtmoCartoImg {
+	width: 250px;
+	height: 250px;
+	overflow: hidden;
+	display: inline-block;
+}
+#updateAtmoCartoImg > img {
+	height: 1000px;
+	margin-left: -475px;
+	margin-top: -425px;
+}
+#updateAtmoCartoImgGlyph {
+	padding-left: 10px;
+	padding-top: 4px;
+}
+#updateAtmoCartoImgTitre {
+	background-color: #fff;
+	opacity: 0.4;
+	font-size: 16px;
+}
+#titrePicDePol, #titrePicDePolDemain {
+	padding-top: 10px;
+}
+#updateAtmo, #commentaireAtmo, #updateAtmoDemain, #updateAtmoAucun, #rowAtmo > div{
+	padding-bottom: 10px;
+}
+#updateAtmoAucun {
+	padding-top: 10px;
+}
+#polluantAtmo{
+	padding-top: 10px;
+}
+#updateAtmoIcone, #updateAtmoCarto {
+	text-align: center;
+}
+.menuBox{
+	position: relative;
+	width: 42%;		/* desired width au lieu de 160*/
+	max-width:42%; /*marche pas*/
+	min-width:15%; /*marche pas*/
+	margin-left:auto;
+	margin-right:auto;
+	display:inline-block;
+}
+.menuBox:before{
+	content: "";
+	display: block;
+	padding-top: 100%; 	/* initial ratio of 1:1*/
+}
+.menuContent {
+	position:  absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+.menuContent > svg {
+	display:inline-block;
+	margin-top: 20%;
+	width: 100%;
+}
+.menuContent span {
+	font-family: "GothamRounded-Medium",Arial,Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+	color:#fff;
+	font-size:14px;
+	display:inline-block;
+	vertical-align:middle;
+}
+
+.menuContent #iconeAlerteAtmo {
+	position: absolute;
+    top: 10%;
+    left: -15%;
+}
+
+#listeNotifs > div, #rowFavoris > #rowFavorisParking > div, #rowFavoris > #rowFavorisCam > div, #rowFavoris > #rowFavorisIti > div, #rowFavoris > #rowFavorisLigne > div,
+#iti > .list-group > li.list-group-item{
+	touch-action: pan-y;
+	-ms-touch-action: pan-y;
+}
+#rowFavoris > #rowFavorisParking > div, #rowFavoris > #rowFavorisLigne > div, #rowFavoris > #rowFavorisCam > div, #rowFavoris > #rowFavorisIti > div {
+	display: flex;
+}
+#rowFavoris > #rowFavorisLigne > div:first-child, #rowFavoris > #rowFavorisParking > div:first-child, #rowFavoris > #rowFavorisCam > div:first-child, #rowFavoris > #rowFavorisIti > div:first-child {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+#rowFavoris .ui-state-highlight{
+	background-color: #0080ff;
+}
+#listeNotifs > div {
+	margin-left: 0px;
+	margin-right: 10px;
+}
+#listeNotifs > div, #rowFavoris > #rowFavorisLigne > .fav , #rowFavoris > #rowFavorisCam > .fav, #rowFavoris > #rowFavorisIti > .fav, #rowFavoris > #rowFavorisParking > .fav, #rowFavoris > #rowFavorisParking > .vide, #rowFavoris > #rowFavorisLigne > .vide, #rowFavoris > #rowFavorisCam > .vide, #rowFavoris > #rowFavorisIti > .vide {
+	border-color: #000;
+	border-style: solid;
+	border-width:0px;
+	border-bottom-width:1px;
+	padding: 8px;
+	transition-property: transform;
+	transition-duration: 500ms;
+	transition-timing-function: ease-out;
+}
+#rowFavoris > #rowFavorisLigne > .fav:first-child , #rowFavoris > #rowFavorisParking > .vide:first-child {
+	border-top-width:1px;
+}
+
+#rowFavoris > #rowFavorisParking > .vide {
+	background-color: #6495ed;
+}
+#rowFavoris > #rowFavorisLigne > .vide {
+	background-color: #e9967a;
+;
+}
+#rowFavoris > #rowFavorisCam > .vide {
+	background-color: #f9ec7a;
+}
+
+#rowFavoris > #rowFavorisIti > .vide {
+	background-color: #89f97a;
+}
+
+#rowFavoris > #rowFavorisCam > div {
+	display : block;
+}
+
+#rowFavoris > #rowFavorisIti > div {
+	display : block;
+}
+
+#rowFavoris > .maj {
+	text-align: right;
+	display: block;
+	margin-right: 10px;
+}
+.dateHeure {
+	padding-right: 12px;
+}
+#rowFavoris > #rowFavorisCam .fav .camLib,#rowFavoris > #rowFavorisIti .fav .itiLib, #rowFavoris > #rowFavorisCam .vide .noCam,  #rowFavoris > #rowFavorisIti .vide .noIti, #rowFavoris > #rowFavorisLigne .fav .arret, #rowFavoris > #rowFavorisLigne .vide .arret, #rowFavoris > #rowFavorisParking .fav .arret, #rowFavoris > #rowFavorisParking .vide .arret, #listeNotifs > div h6{
+	display: inline;
+	font-family: "GothamRounded-Medium",Arial,Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+	font-size:14px;
+	margin-left:8px;
+}
+
+#rowFavoris > #rowFavorisLigne .dir1, #rowFavoris > #rowFavorisLigne .dir2 , #rowFavoris > #rowFavorisParking .placeLibre {
+	font-weight: bold;
+	display: none;
+	width: 100%;
+	/*white-space: nowrap;*/
+}
+#rowFavoris > #rowFavorisLigne .libDir {
+	padding-right: 10px;
+}
+#rowFavoris > #rowFavorisLigne .delai, #rowFavoris > #rowFavorisParking .delai {
+	color: #e55b2c;
+}
+#rowFavoris, #rowNotif{
+	overflow-y: auto;
+	overflow-x: hidden;
+	-webkit-overflow-scrolling: touch;
+}
+#rowFavoris > #rowFavorisParking .parking {
+	background: url(../img/parking.svg) no-repeat;
+	height: 25px;
+	width: 25px;	
+}
+#rowFavoris > #rowFavorisCam .cam {
+	background: url(../img/cam.png) no-repeat;
+	height: 25px;
+	width: 25px;	
+}
+
+#rowFavoris > #rowFavorisIti .iti {
+	background: url(../img/iti.png) no-repeat;
+	height: 25px;
+	width: 25px;	
+}
+
+#rowFavoris > #rowFavorisIti .fav {
+	display: flex;
+}
+
+#rowFavoris > #rowFavorisCam .fav {
+	display: flex;
+}
+
+#rowFavoris > #rowFavorisAucun {
+	text-align: center;
+	padding: 10px;
+}
+
+#bookmarkIti {
+	display: inline-block;
+	margin-left: 20px;
+}
+
+-webkit-scrollbar-thumb{
+background-color:#B03C3F;
+border-radius:10px;
+}
+-webkit-scrollbar-thumb:hover{
+background-color:#BF4649;
+border:1px solid #333333;
+}
+-webkit-scrollbar-thumb:active{
+background-color:#A6393D;
+border:1px solid #333333;
+} 
+
+#listeNotifs > div p{
+	word-wrap: break-word;
+}
+#changeUtil {
+	font-size: 18px;
+	vertical-align: middle;
+	display: inline-block;
+	margin-left: 5px;
+}
+#rowFavoris .fav > div > span, #rowFavoris .vide > div > span {
+	display: inline-block;
+	vertical-align: middle;
+}
+#rowFavorisButton{
+	margin-left: 5px;
+	margin-right: 5px;
+	width: 35px;
+	height: 35px;
+}
+#iconetrafic, #iconetc, #iconeparking, #iconehorairesstatics, #iconeprochainspassages{
+	/*width: 30px;*/
+	height: 35px;
+}
+#tc_link a, #traffic_link a, #parking_link a, #horairesStatics_link a, #prochainsPassages_link a {
+	padding-top : 0px;
+	padding-bottom : 0px;
+}
+#push_link, #conf_link {
+color: #fff;
+background-color: #000;
+}
+#push_link > a, #conf_link > a {
+color: #fff;
+}
+#push_link > a:focus, #push_link > a:hover, #conf_link > a:focus, #conf_link > a:hover{
+color: #b0c73a;
+}
+#traffic_link a:hover, #traffic_link a:focus, #tc_link a:hover, #tc_link a:focus, #parking_link a:hover, #parking_link a:focus, #push_link a:hover, #push_link a:focus, #conf_link a:hover, #conf_link a:focus {
+	background-color: transparent;
+	border-color: transparent;
+}
+#rowAlertes > ul {
+	background-color: #000;
+	position: absolute;
+	top: 50px;
+	left: 0;
+	height:42px;
+	width:100%;
+}
+#textMajRowFavoris {
+    padding-top: 10px;
+}
+#contenuHoraires {
+	height: 100%;
+	height: calc(100% - 42px);
+	width: 100%;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding-top: 0px!important;
+}
+#contenus {
+	padding-top: 42px;
+	height: 100%;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+#rowMapProxi,#rowAlertes,#rowMapIti,#rowParam,#rowAbout,#rowAtmoCarto, #rowParking,#rowHoraires {
+	height:100%!important;
+}
+#rowMapTraffic {
+	height:100%!important;
+	padding:0px!important;
+}
+#rowAbout h4, #rowAbout h5, #rowParam h4, #rowParam h5 {
+	color: #b0c92b!important;
+	font-weight: bold;
+	padding-top:5px;
+}
+
+#divAlert h4 {
+	padding-top:5px;
+}
+
+
+#rowAbout hr, #rowParam hr {
+	border-top-color: #b0c92b!important;
+	margin-bottom: 5px!important;
+}
+#rowAbout .container, #rowParam .container  {
+	padding-left: 25px;
+	padding-right: 25px;
+}
+#rowAbout p, #rowAbout span, #rowParam p, #rowParam span{
+font-size: 13px;
+}
+#mainAbout {
+	padding-left: 25px;
+	padding-right: 25px;
+	height: 100%
+}
+#rowParam .btn-group {
+	padding-left: 15px;
+	display: inline-table;
+}
+#rowParam .col-xs-12 {
+	display: flex;
+	padding-bottom: 15px;
+}
+
+#contenus > div, #contenuHoraires > div, #rowTraffic {
+	min-height:100%;
+	overflow-y:auto;
+	height:100%;
+}
+#contenus > div{
+	background-color:#fff;
+	padding-left:15px;
+	padding-top:15px;
+	width: 100%;
+}
+
+#entetePkg, #entetePar {
+	background-color : blue;
+	color: white;
+	size:22;
+}
+#rowParking div.favori-empty, #rowParking div.favori {
+	height: 20px;
+	width: 20px;	
+}
+#ParcRows, #PkgRows  , #ParcRows > li > div , #PkgRows > li > div {
+	padding-left:0px;
+	margin-bottom:0px;
+}
+#ParcRows > li.forceHidePAR, #PkgRows > li.forceHidePKG {
+	display: none !important;
+}
+#ParcRows > li, #PkgRows > li {
+	border-bottom:1px solid #e0e0e0;
+	padding-bottom: 8px;
+	padding-top: 8px;
+}
+
+#ParcRows > li .favori  ,#ParcRows > li .favori-empty  , #PkgRows > li .favori  ,#PkgRows > li .favori-empty  {
+	margin-bottom : 0px;
+}
+
+#ParcRows > li > div > span.syRendre:hover {
+	color: red !important;
+	cursor: pointer;
+	font-size:105%;
+	font-style:normal; 
+}
+#PkgRows > li > div > span.syRendre:hover {
+	color: red !important;
+	cursor: pointer;
+	font-size:105%;
+	font-style:normal; 
+}
+#ParcRows > li > div > span.adresseParking , #PkgRows > li > div > span.adresseParking{
+ color: red; !important;
+ font-size:100%; 
+ font-weight: bold; 
+ font-style:italic
+}
+
+#contenus > #rowParking {
+	/*padding-left:0px;*/
+	padding-top:0px;
+}
+.marge {
+	margin-left: 5em;
+}
+.logoLgn {
+	height: 30px;
+	width:30px;
+	cursor:default;
+	float:left;
+}
+.logoLgnRect {
+	height: 30px;
+	width:60px;
+}
+h4{
+	font-family: "GothamRounded-Medium",Arial,Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+	font-size:14px;
+}
+h4 > .logoLgn {
+	margin-top:-6px;
+}
+hr {
+	margin-bottom: 0px;
+	margin-top: 0px;
+	border-top-color: #000;
+}
+#mapProxi, #mapTraffic,#mapIti,#mapAtmo {
+	height:100%;
+	width:100%;
+}
+.controle-ol {
+	background: none repeat scroll 0 0 rgba(255, 255, 255, 0.4);
+	border-radius: 4px;
+	right: 8px;
+	padding: 2px;
+	position: absolute;
+	z-index:50;
+}
+.controle-ol a {
+	background: none repeat scroll 0 0 rgba(0, 0, 0, 1);
+	color: #fff;
+	display: block;
+	height: 30px;
+	line-height: 30px;
+	margin: 1px;
+	padding: 0;
+	text-align: center;
+	width: 30px;
+	border-radius: 2px;
+	font-size: 12px;
+}
+.ol-touch .controle-ol a {
+	font-size: 1.14em;
+	height: 1.825em;
+	line-height: 2.1em;
+	width: 1.825em;
+}
+.ol-control button {
+	background: none repeat scroll 0 0 rgba(0, 0, 0, 1);
+	height: 30px;
+	width: 30px;
+}
+.ol-zoom {
+	right:8px;
+	left:auto;
+	top:10px;
+}
+.ol-rotate {
+	right:auto;
+	left:8px;
+	top:10px;
+}
+.localize {
+	top: 145px;
+}
+.refresh {
+	top: 75px;
+}
+.layer-switcher {
+	top:110px;
+}
+.close-switcher.pull-right {
+	padding-left: 3px;
+	padding-right: 3px;
+}
+.layerSwitcher div{
+	color: #fff;
+	cursor:pointer;
+}
+.layerSwitcher {
+	display:none;
+	position:absolute;
+	top: 12px;
+	right:10px;
+	z-index:51;
+	background: none repeat scroll 0 0 rgba(0, 0, 0, 1);
+	color: #fff;
+	line-height: 23px;
+	margin: 1px;
+	padding: 0 8px;
+	text-align: center;
+	border-radius: 2px;
+	max-width:400px;
+	width: 90%;
+	width: calc(100% - 20px);
+	max-height: 90%;
+	max-height: calc(100% - 92px);
+}
+.layersPanel {
+	position: relative;
+	height: 100%;
+	display: block;
+}
+.layerSwitcher label {
+	font-weight:normal;
+	margin-bottom:0px;
+}
+.ol-touch .localize {
+	top: 152px;
+	line-height: 28px;
+}
+.ol-touch .refresh {
+	top: 76px;
+	line-height: 28px;
+}
+.ol-touch .layer-switcher {
+	top: 114px;
+	line-height: 28px;
+}
+.ol-touch .layerSwitcher {
+	top: 116px;
+}
+.bases{
+	clear:both;
+}
+#mapProxi .layersPanel .layers {
+height: 90%;
+-webkit-column-count: 2;
+-moz-column-count: 2;
+column-count: 2;
+-webkit-column-gap: 0;
+-moz-column-gap: 0;
+column-gap: 0;
+}
+.catLayerSwitcher {
+	text-decoration:underline;
+	display:block;
+}
+.afficherLayersCat {
+	display:block!important;
+}
+#mapProxi .layersPanel .layers li.titresTC {
+	display:none;
+}
+.logoMenu {
+	position: relative;
+	padding-left: 1.25em;
+}
+.logoMenu:before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0.25em;
+	width: 1em;
+	height: 0.15em;
+	background: black;
+	box-shadow: 
+	0 0.25em 0 0 black,
+	0 0.5em 0 0 black;
+}
+.ol-overlay-container {
+	display:block!important;
+	position:static!important;
+}
+#popupMap {
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	right:0px;
+	top:auto;
+	z-index:1001;
+	font-family: "GothamRounded-Medium",Arial,Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+	font-size: 12px;
+	display: block;
+	padding: 0px 15px 3px;
+	background-color:rgba(255,255,255,1);
+	overflow-y:auto;
+}
+#popupMap {
+	max-height:60%;
+}
+.saisie_clear {
+	color:#c0c0c0;
+	display: block;
+	height: 34px;
+	line-height: 34px;
+	position: absolute;
+	right: 0;
+	text-align: center;
+	top: 0;
+	width: 34px;
+	z-index: 2;
+	cursor:pointer;
+}
+#itineraire .panel-heading {
+	display:none;
+}
+#itineraire .panel {
+	margin-bottom:0px;
+	border:0px;
+}
+#itiDetails,#iti ul.list-group,#itiParams .panel-body {
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	right:0px;
+	top:0px;
+	z-index:1001;
+	font-family: "GothamRounded-Medium",Arial,Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+	font-size: 12px;
+	display: block;
+	padding: 50px 0px 0px;
+	background-color:rgba(255,255,255,1);
+	overflow-y:auto;
+	margin-bottom:0px;
+	height: 100%;
+}
+#itiParams .panel-body {
+	background-color:rgba(230,230,230,1);
+}
+#iti ul.list-group {
+	top:37px;
+	padding: 50px 0px 37px;
+	height: 90%;
+	height: calc( 100% - 37px );
+}
+#itiMainParamsButton {
+	display: block;
+	margin-top: 15px;
+	position: fixed;
+	right: 0px;
+	z-index: 10;
+}
+#itiParams input, #itiParams select, #itiParams span.input-group-addon {
+	border-radius:0px!important;
+	background-color: #fff;
+	border:0;
+	height: 50px;
+}
+#itiParams span.input-group-addon, #datepickerIti span.input-group-addon{
+	/*border-right:0px;*/
+	border:0px;
+	padding-bottom: 3px;
+}
+#dep , #arr , #datepickerIti > input{
+	/*border-left:0px;*/
+	border:0px;
+}
+#datepickerIti {
+	padding-top: 15px;
+}
+#dep{
+	border-bottom:0px;
+}
+#transitInput, #transit_pmrInput, #bikeInput, #walkInput, #pmrInput, #carInput {
+	height:100%!important;
+}
+#itiDetails .panel-body {
+	padding-left:0px;
+	padding-right:0px;
+}
+.typeahead { 
+	z-index: 1051;
+	overflow-y: scroll;
+	max-height: 250px;
+}
+.typeahead  .bestResult {
+	/*pour mettre en valeur le meilleur resultat*/
+	background-color: #d0d0d0;
+}
+.typeahead span[data-type="RUE"]::before, .typeahead span[data-type="LIEU"]::before, .typeahead span[data-type="ARRET"]::before, .typeahead span[data-type="AXE"]::before {
+	background-size: 100% 100%;
+	content: "\00a0";
+	height: 16px;
+	width: 16px;
+	margin-right:5px;
+	display:inline-block;
+}
+.typeahead span[data-type="RUE"]::before{
+	background: url(../img/rue.png) no-repeat;
+}
+.typeahead span[data-type="LIEU"]::before{
+	background: url(../img/lieu.png) no-repeat;
+}
+.typeahead span[data-type="ARRET"]::before{
+	background: url(../img/Arret.png) no-repeat;
+}
+.typeahead span[data-type="AXE"]::before{
+	font-family: "Glyphicons HalfLings", "Arial", "Helvetica", sans-serif;
+	content: "\e024";
+	color:#cd5c1d;
+}
+.typeahead  .categorie {
+	font-weight: bold;
+	margin-left: -21px;
+}
+.dropdown-menu li a {
+	padding:0px 0px;
+}
+.dropdown-menu li a span {
+	width:100%;
+	padding:3px 20px;
+	display:block;
+}
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+	background-color:#fff;
+	color:#000;
+}
+.dropdown-menu > .active > a span[data-type], .dropdown-menu > .active > a span[data-type]:hover, .dropdown-menu > .active > a span[data-type]:focus {
+	background-color: #428bca;
+	color: #fff;
+}
+.PopupDetails-head {
+	color: #000;
+	text-align: center;
+	min-width: 250px;
+}
+.PopupDetails-Close {
+	font-size:16px;
+	color: #fff;
+	cursor:pointer;
+	position: absolute;
+	z-index: 50;
+	right:5px;
+	top:1px;
+	cursor:pointer;
+	line-height:30px;
+}
+ [class*="PopupDetailsEntete"] {
+	background-color: #000;
+	color: #fff;
+	line-height:30px;
+ }
+ .dyn {
+	margin-top:5px;
+}
+.dynVide {
+	display:none!important;
+}
+.PopupDetails-detailsCallback ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+.PopupDetails-detailsCallback ul li {
+	display: inline-block;
+	font-size: 1.125em;
+	line-height: 35px;
+	text-align: left;
+	width: 49%;
+}
+.PopupDetailsEntetecitelib {
+	background-color: #009CD3;
+ }
+[class*="PopupDetailsEnteteLayerMV"] {
+	background-color: #b0c92b;
+}
+[class*="PopupDetailsEnteteMV"] {
+	background-color: #b0c92b;
+}
+.PopupDetailsEnteteagenceM , .PopupDetailsEntetepointService, .PopupDetailsEntetedat, .PopupDetailsEntetedepositaire {
+	background-color: #b0c92b;
+}
+.PopupDetailsEnteteLayerPAR, .PopupDetailsEnteteLayerPKG {
+	background-color: #428bca;
+}
+.PopupDetailsCitélib, .PopupDetailsLayerPAR,.PopupDetailsLayerPKG,.PopupDetailsLayerPMV,.PopupDetailsLayerMVA,.PopupDetailsLayerMVB, .PopupDetailsLayerMVC {
+	text-align:center;
+ }
+.PopupDetails-body-multiple {
+	padding:0 15px;
+}
+.popupFavori {
+	display:inline-block!important;
+}
+.state-park {
+	background-image:url('../img/placeparking.svg');
+}
+.state-camera {
+	font-size:20px;
+	cursor:pointer;
+	padding-top: 5px;
+ }
+.PopupDetails-detailsCallback {
+	text-align: center;
+}
+.PopupDetails-detailsCallback > span {
+	display: block;
+}
+[class*="bs-picto-"] {
+	background-repeat: no-repeat;
+	display: inline-block;
+	vertical-align: middle;
+	padding-left: 40px;
+}
+#popupMap .PopupDetailsEntetearret, #popupMap .PopupDetailsEntetepointArret, #popupMap .PopupDetailsEntetearretSel {
+	background-color: #00a453;
+	color: #fff;
+	height: 30px;
+	line-height: 30px;
+}
+#popupMap .PopupDetails-detailsCallback .header {
+	height:30px;
+	line-height:30px;
+	background-color:#00a453;
+	color:#fff;
+}
+#popupMap .PopupDetails-detailsCallback .logoLigne {
+	display: block;
+	float: left;
+	height: 34px;
+	width: 60px;
+}
+#popupMap .PopupDetails-detailsCallback .logoLigne .svgLigne .logo  {
+	margin-left: 2px;
+	margin-right: 15px;
+}
+#popupMap .PopupDetails-detailsCallback .logoLigne .svgLigne .logoRect  {
+	margin:0px;
+}
+#popupMap .PopupDetails-detailsCallback .icones {
+	height:30px;
+	background-color:#f0f0f0;
+}
+#popupMap .PopupDetails-detailsCallback .icones > span{
+	line-height:30px;
+}
+#popupMap .PopupDetails-detailsCallback .icones .libelle{
+	display:inline-block;
+	line-height:14px;
+}
+#popupMap .PopupDetails-detailsCallback .dep .glyphicon{
+	color:#52ae32;
+	font-size:23px;
+}
+#popupMap .PopupDetails-detailsCallback .arr .glyphicon {
+	color:#ff0032;
+	font-size:23px;
+}
+#popupMap .PopupDetails-detailsCallback .ligne {
+	margin-bottom:10px;
+}
+#popupMap .PopupDetails-detailsCallback .dir1, #popupMap .PopupDetails-detailsCallback .dir2 {
+	float:left;
+	width: 80%;
+	width: calc(100% - 65px);
+	height:30px;
+	line-height:30px;
+	border-left: 1px solid #777777;
+	padding-left:5px;
+}
+#popupMap .PopupDetails-detailsCallback .ligne .dir2:not(.nonReduit) {
+	height:4px;
+}
+#popupMap .PopupDetails-detailsCallback .ligne .dir2:not(.nonReduit) *{
+	display:none;
+}
+#popupMap .PopupDetails-detailsCallback .libDir {
+	display: block;
+	float: left;
+	max-width: 80%;
+	max-width: calc(100% - 50px);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#popupMap .PopupDetails-detailsCallback .evt {
+	float:left;
+	width: 100%;
+	line-height:30px;
+	padding-left:70px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow-x:hidden;
+	text-align:left;
+}
+#popupMap .PopupDetails-detailsCallback .dir1 {
+	border-bottom: 1px solid #777777;
+}
+#popupMap .PopupDetails-detailsCallback .delai {
+	font-family: Arial;
+	font-size: 10px;
+	font-style: italic;
+	line-height:14px;
+	text-align:right;
+}
+#popupMap .PopupDetails-detailsCallback .ligne  .glyphicon {
+	font-size:20px;
+	line-height:30px;
+}
+#popupMap .PopupDetails-detailsCallback .evt  .glyphicon {
+	color:red;
+}
+.PopupDetailsLayerLgn{
+	cursor:pointer;
+}
+#calculer{
+	background-color:#2196f3;
+	color:#fff;
+	font-weight: bold;
+}
+#modes > ul > label > svg, #modes > ul > label > img {
+	width :40px;
+	height :40px;
+}
+#modes > ul > label > svg path {
+	fill: #fff;
+}
+#transit > input:checked ~ label > img {
+	box-sizing: border-box;
+	background: url(../img/tc_bleu.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#transit > input:not(:checked) ~ label > img { /*contournement bug android 4.3 */
+	box-sizing: border-box;
+	background: url(../img/tc_blanc.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#transit_pmr > input:checked ~ label > img {
+	box-sizing: border-box;
+	background: url(../img/tc_pmr_bleu.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#transit_pmr > input:not(:checked) ~ label > img { /*contournement bug android 4.3 */
+	box-sizing: border-box;
+	background: url(../img/tc_pmr_blanc.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#bike > input:checked ~ label > img {
+	box-sizing: border-box;
+	background: url(../img/velo_bleu.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#bike > input:not(:checked) ~ label > img { /*contournement bug android 4.3 */
+	box-sizing: border-box;
+	background: url(../img/velo_blanc.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#walk > input:checked ~ label > img {
+	box-sizing: border-box;
+	background: url(../img/pieton_bleu.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#walk > input:not(:checked) ~ label > img { /*contournement bug android 4.3 */
+	box-sizing: border-box;
+	background: url(../img/pieton_blanc.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#pmr > input:checked ~ label > img {
+	box-sizing: border-box;
+	background: url(../img/pmr_bleu.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#pmr > input:not(:checked) ~ label > img { /*contournement bug android 4.3 */
+	box-sizing: border-box;
+	background: url(../img/pmr_blanc.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#car > input:checked ~ label > img {
+	box-sizing: border-box;
+	background: url(../img/voiture_bleu.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#car > input:not(:checked) ~ label > img { /*contournement bug android 4.3 */
+	box-sizing: border-box;
+	background: url(../img/voiture_blanc.svg) no-repeat;
+	padding-left: 40px;
+	height :40px;
+}
+#ongletPieton.active > #imgPieton {
+	box-sizing: border-box;
+	background: url(../img/pieton_bleu.svg) no-repeat;
+	padding-left: 30px;
+}
+
+#ongletPmr.active > #imgPmr {
+	box-sizing: border-box;
+	background: url(../img/pmr_bleu.svg) no-repeat;
+	padding-left: 30px;
+	height :30px;
+	width :30px;
+}
+#walk > svg path {
+	margin-left: 8px!important;
+	height: 30px;
+	width: 30px;
+}
+#pmr > svg path {
+	margin-left: 8px!important;
+	height: 30px;
+	width: 30px;
+}
+#modes div {
+	height: 30px;
+	width: 30px;
+}
+#modes{
+	text-align: justify;
+}
+#modes > ul {
+	display: inline-block;
+	text-align: center;
+	padding-left: 0;
+	/*width: 30px;*/
+	/*margin:5px 7px;*/
+	margin-bottom: 5px;
+	/*margin-left: 3px;
+	margin-right: 6px;*/
+	margin-top: 6px;
+}
+#ongletPmr, #ongletPieton {
+	display:inline-table;
+	cursor:pointer;
+	padding:5px 10px;
+	background-color:#fff;
+}
+#ongletPieton.active, #ongletPmr.active, #modes{
+	background-color:#424242;
+}
+#ongletPieton, #ongletPmr {
+	/*background-color:#cacaca;*/
+}
+#allModes {
+	padding-top: 10px;
+	/*margin-left: -30px;*/
+	text-align: center;
+}
+#imgPmr, #imgPieton {
+	height: 30px;
+	width: 30px;
+	margin-right:auto;
+}
+
+#ongletPieton.active > svg path, #ongletPmr.active > svg path {
+	fill: #000;
+}
+#ongletPmr > svg path , #ongletPieton > svg path{
+	fill: #fff;
+}
+.voiture {
+	width: 30px;
+	height:30px;
+	margin-right: 6px;
+}
+.panel-body {
+	padding-bottom:5px;
+	padding-top:0px;
+}
+#panel-heading-itineraire {
+	background-color:#e3007e;
+	color:#fff;
+}
+#iti-params-inverse {
+	margin-top: 25px;
+	border: 0;
+	background-color: transparent;
+	/*background-color: #fff;*/
+}
+#iti-params-inverse > .glyphicon{
+	color: #000;
+	font-weight: 900;
+}
+.panel-title {
+	font-weight: bold;
+}
+#panel-heading-resultats, #panel-heading-details {
+	font-weight: bold;
+	background-color:#00a453;
+	color:#fff;
+	border-bottom:0px;
+}
+#panel-footer-resultats-suivant, #panel-heading-resultats-precedent {
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	right:0px;
+	z-index:1002;
+	font-weight: bold;
+	background-color:#e0f4ea;
+	color:#00a453;
+	font-size: 13px;
+	border-bottom:0px;
+	padding-top:0px;
+	padding-bottom:0px;
+	cursor:pointer;
+	height: 37px;
+}
+#panel-heading-resultats-precedent {
+	top:50px;
+}
+.no-v-padding{
+	padding-bottom:0px;
+	padding-top:0px;
+}
+.no-h-padding{
+	padding-left:0px;
+	padding-right:0px;
+}
+#iti .legs {
+	width: 90%;
+	width: calc(100% - 20px);
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#iti .list-group-item {
+	border-color: #a0a0a0;
+	padding-bottom:5px;
+}
+#iti .legs .btn {
+	padding:0px;
+}
+#iti .legs figcaption {
+	font-size:10px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.headIti{
+	background-color: #00a453;
+	color: white;
+	text-align: center;
+	font-weight: bold;
+	height: 20px;
+	line-height: 20px;
+}
+.row.headIti span {
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+.lien-details .glyphicon-chevron-right:before {
+	display: inline-block;
+	font-size: large;
+	height: 40px;
+	line-height: 40px;
+	vertical-align: middle;
+	width: 20px;
+}
+.lien-details > span {
+	color: #00a453;	
+	font-size: small;
+}
+#togglePanelsParams, #togglePanelsResultats{
+	color:#fff;
+	outline:none;
+}
+.lien-resultats {
+	color : #eeeeee;
+	font-weight: bold;
+	font-size:small;
+}
+.resultat{
+	line-height:40px;
+}
+.resultat, .leg{
+	padding-top:5px;
+}
+.co2, .traffic {
+	padding-bottom:5px;
+	color : #333;
+}
+.co2 {
+	background: url(../img/co2.png) no-repeat;
+	display:inline-block;
+	padding-left:38px;
+	margin-top:2px;
+	height: 16px;
+	line-height: 16px;
+}
+.co2 > a, .traffic  > a{
+	color : #00a453;
+	text-decoration: underline;
+}
+.lien-details {
+	height: 40px;
+	display: inline-block;
+}
+#itiDetails  .legs {
+	display:table;
+	padding-left: 10px;
+	width:100%;
+}
+#itiDetails  .legs .leg{
+	display:table-row;
+}
+#itiDetails  .legs .leg > div{
+	display:table-cell;
+	position:relative;
+}
+#itiDetails  .legs .leg .logoMode, #itiDetails  .legs .leg  .logoSvg{
+	position: relative;
+	right: -10px;
+}
+#itiDetails  .legs .leg  .logoSvgRect{
+	position: relative;
+	right: -20px;
+	margin-left: -20px;
+}
+#itiDetails  .plusDeDetail, #itiDetails .moinsDeDetail {
+	padding-top: 20px;
+	padding-bottom: 10px;
+	padding-left: 20px;
+	color : #00a453;
+	text-decoration: underline;
+	cursor:pointer;
+}
+#itiOptions {
+	padding: 15px;
+}
+#itiOptions .date {
+	margin-bottom:8px;
+}
+.text-v-top{
+	vertical-align:top;
+}
+.text-v-middle{
+	vertical-align:middle;
+}
+.text-v-bottom{
+	position:absolute;
+	right:24px;
+	bottom:0px;
+}
+.border-left  {
+	padding-left:3px;
+	padding-right:5px;
+}
+.border-left::before  {
+	content:" ";
+	display:block;
+	border-left: 1px solid #000;
+	position: absolute;
+	top: 30px;
+	bottom: 0px;
+	left: -1px;
+}
+.border-left-dashed  {
+	border-left-style: dashed;
+}
+
+.full-height:after {
+height:100%;
+}
+.legs .logoMode {
+	width:20px;
+	height:20px;
+	display: inline-block;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	color:transparent;
+	border-style:none;
+	margin-top:3px;
+}
+.WALK .logoMode {
+	background:url(../img/pieton.svg) no-repeat;
+}
+.BICYCLE .logoMode {
+	background:url(../img/velo.svg) no-repeat;
+}
+.CAR .logoMode {
+	background:url(../img/voiture.svg) no-repeat;
+}
+.BUS .logoMode {
+	background:url(../img/tc.svg) no-repeat;
+}
+.CABLE_CAR .logoMode {
+	background:url(../img/bulle.svg) no-repeat;
+}
+.logoSvg {
+	width:20px;
+	height:20px;
+	display: inline-block;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	vertical-align: middle;
+	cursor:default;
+}
+.logoSvgRect {
+	width:40px;
+	height:20px;
+	display: inline-block;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;	
+}
+.legdep {
+	color : #009900;
+}
+.legarr {
+	color : #ff0000;
+}
+.legarr, .legdep {
+	font-size: 13px;
+	position: relative;
+	right: -5px;
+	cursor:default;
+}
+.leg .text-right{
+	z-index:1;
+}
+.hdep.first, .harr.last {
+	font-weight: bold;
+}
+#itiMainParams {
+	padding-top: 15px;
+}
+#itiMainParams > div:first-of-type{
+	/*border-bottom:0;*/
+}
+#itiMainParams > div{
+	padding-left: 0;
+	padding-right: 0;
+}
+.removed {
+	-webkit-animation: disapear 0s;
+	-webkit-animation-fill-mode: backwards; 
+	animation: disapear 0s;
+	animation-fill-mode: backwards;*/
+}
+.added {
+	-webkit-animation: disapear 0s;
+	-webkit-animation-fill-mode: backwards; 
+	animation: disapear 0s;
+	animation-fill-mode: backwards;
+	animation-direction: reverse;
+}
+@-webkit-keyframes disapear{
+	0% {
+	-webkit-transform: none;
+	transform: none;
+	} 
+	100% {
+	-webkit-transform: none;
+	transform: none;
+	}
+}
+.row.profil canvas{
+	margin-left: 15px;
+}
+.row.steps .step{
+	padding-right:0px;
+}
+.ellipsis {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.layerSwitcherTitle{
+	font-weight: bold;
+}
+#detailFooter{
+	cursor: pointer;
+	text-decoration:none;
+	color:#000;
+}
+#detailFooter > a{
+	color:#000;
+}
+.info {
+	padding-left: 30px;
+}
+.cov, .flexo {
+	display: inline-block;
+	background-size: 100% 100%;
+	width:20px;
+	height:20px;
+}
+.cov {
+	background: url(../img/covoiturage.png) no-repeat;
+}
+.flexo {
+	background: url(../img/flexo.png) no-repeat;
+}
+.text-v-middle > .duree.ellipsis, .text-v-middle > .distance.ellipsis {
+	display: list-item;
+	font-style: italic;
+	font-weight: bold;
+}
+#listeLignes {
+	bottom:0px!important;
+}
+.horairesOnglets-Close {
+	font-size: 16px!important;
+}
+.listeSiv {
+	margin-top: 18px;
+}
+.listeSiv hr {
+ background-color: #000;
+	height: 1px;
+	margin-bottom: 0;
+	margin-top: 0;
+}
+.listeSiv  .logoLgn{
+	margin-right: 10px;
+}
+.trajetRoutier {
+	padding-left: 50px;
+}
+#listeTrajets {
+	text-align: center;
+}
+#listeTrajets h6 {
+	font-size: 9px;
+	line-height: 12px;
+	margin-bottom: 0;
+	text-align: left;
+}
+#listeTrajets .btn-group {
+	margin-top: 25px;
+}
+.favori-empty {
+	background: url(../img/favori-empty.svg) no-repeat;
+	height: 25px;
+	width: 25px;
+	margin-bottom: 10px;
+}
+.favori {
+	background: url(../img/favori.svg) no-repeat;
+	height: 25px;
+	width: 25px;
+	margin-bottom: 10px;
+}
+#arrets {
+	margin-left: 10px;
+}
+.logoSEM, .logoC38, .logoSNC {
+	height:30px;
+}
+.listeEvts > div > p {
+	padding-bottom: 30px;
+}
+.listeEvts > div > div > span.titreEvt {
+	font-weight: bold;
+	line-height: 30px;
+}
+#icon_link, #icon_link > .active {
+	color:#fff;
+}
+#alerteType .btn.active {
+	color:#000;
+}
+#alerteType, #alerteMessage, #alertePosition, #alertePhoto{
+	margin-top: 5px;
+}
+#alerteMail {
+	margin-top: 10px;
+}
+#alertePosition {
+	padding-left: 10px;
+	color: #000;
+}
+#alerteMessage, #rowRegisterNotif {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+#updateEvtsTC {
+	text-align: right;
+}
+.modaleBox {
+	display: -webkit-inline-box;
+	display: inline-flex;
+	position: absolute;
+	top: 0px;
+	width:75%;
+	height:100%;
+	height:calc(100% + 1px);
+	color: #ffffff;
+	text-align: center;
+	border-color: #000;
+	border-style: solid;
+	border-width:0px;
+	border-bottom-width:1px;
+}
+.modaleBox > div {
+	display: grid;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	vertical-align: middle;
+	font-size:1.4em;
+	height: 100%;
+	font-family: Arial,Verdana,Geneva,Lucida,Helvetica,sans-serif;
+}
+#rowFavorisParking .modaleBox > div {
+	font-size:1.0em;
+}
+.modaleBox.notifs > div {
+	width: 50%;
+}
+.modaleBox.fav > div {
+	width: 34%;
+}
+.modaleBox.right {
+	left: -75%;
+}
+.modaleBox.left {
+	left: 100%;
+}
+.suppAll {
+	background-color: #6c1616;
+}
+.supp {
+	background-color: #f44336;
+}
+.ok {
+	background-color: #3e73a7;
+}
+.cancel {
+	background-color: #808080;
+}
+.ol-attribution.ol-unselectable.ol-control.ol-collapsed.ol-logo-only {
+	padding: 30px;
+	padding-right: 15px;
+}
+.localize.ol-control.controle-ol.ol-unselectable {
+			top: 145px;
+			z-index: 49;
+}
+#mapTraffic, #mapProxi, #mapIti, #mapAtmo { //correction bug deplacement carte android > 5
+    -ms-touch-action: none;  
+    touch-action: none;
+}
+#timesyncPKG, #timesyncEvtsTC, #timesyncFav{
+	position: absolute;
+	margin: auto;			
+	left: 0;
+	right: 0;
+	top: 60%;
+	z-index: 10;
+	width: 40px;
+	font-size: 26px;
+	text-align: center;
+	border-radius: 20px;
+	background-color: #f5f5f5;
+	opacity:1!important;
+	height: 40px;
+	padding: 5px 0px;
+	cursor:pointer;
+	display:none;
+	box-shadow:0 3px 3px #000;
+}
+#forFred{
+	width: 100%;
+	height: 100%;
+}
