@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<!--
+// Metromobilité is the mobile application of Grenoble Alpes Métropole <http://www.metromobilite.fr/>.
+// It provides all the information and services for your travels in Grenoble agglomeration.
+// Available for Android, iOs, Windows Phone, it's been developed on Cordova https://cordova.apache.org/.
+
+// Copyright (C) 2013
+// Contributors:
+//	NB/VT - sully-group - www.sully-group.fr - initialisation and implementation
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="msapplication-tap-highlight" content="no" />
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self' gap://ready file://* http://* https://* *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.metromobilite.fr ; img-src 'self' data: http://* https://* *.metromobilite.fr *.openlayers.org www.air-rhonealpes.fr www.atmo-auvergnerhonealpes.fr">
+ 		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, viewport-fit=cover" />
+		<link rel="stylesheet" href="js/lib/ol/ol.css" type="text/css" />
+		<link rel="icon" href="favicon.png" />
+		<link href="js/bsp/css/bootstrap.min.css" rel="stylesheet">
+		<link href="js/bsp/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link href="css/prochainsPassages.css" rel="stylesheet" type="text/css">
+		<link href="css/horaires.css" rel="stylesheet" type="text/css">
+		<link href="css/surcharge.css" rel="stylesheet" type="text/css">
+			
+		<title>MétroMobilité</title>
+	</head>
+	<body>
+		<nav id="mainNav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" id='buttonMenuNav' class="navbar-toggle" data-toggle="collapse" data-target="#menuNav">
+							<span class="glyphicon glyphicon-option-vertical"></span>
+					</button>
+					<div class="titreLogo"><img  class="logo" src="img/logo.png"/> <span>METROMOBILITE</span></div>
+					<a class="navbar-brand" id="navbarPrev" href="#" style="display:none"><span id="navPrev" class="glyphicon glyphicon-chevron-left"></span><span id="titrePage" class="titre">MétroMobilité</span></a>
+					<a id="icon_link" alt="parametres" type="button" class="hidden btn navbar-btn navbar-right" href="#"><span class="glyphicon glyphicon-cog"></span></a>
+				</div>
+				<div class="collapse navbar-collapse" id="menuNav">
+					<ul class="nav navbar-nav">
+						<li><a href="#" id="proxi_link2" class="couleur_tc"><span class="menuLogo"></span><span class="text autourDeMoi"> AUTOUR DE MOI</span></a></li>
+						<li><a href="#" id="horaires_link2" class="couleur_horairesTR"><span class="menuLogo"></span><span class="text horaires"></span></a></li>
+						<li><a href="#" id="iti_link2" class="couleur_velo"><span class="menuLogo"></span><span class="text itineraire"></span></a></li>
+						<li><a href="#" id="infoTrafic_link2" class="couleur_voiture"><span class="menuLogo"></span><span class="text infoTrafic"></span></a></li>
+						<li><a href="#" id="atmo_link2" class="couleur_horaires"><span class="menuLogo"></span><span class="text atmo"></span></a></li>
+						<li><a href="#" id="fav_link2" class="couleur_conseil"><span class="menuLogo"></span><span class="text favoris"></span></a></li>
+						<li><a href="#" id="notif_link2" class="couleur_horaires"><span class="menuLogo"></span><span class="text monCompte"></span></a></li>
+						<li><a href="#" id="param_link2"><span class="glyphicon glyphicon-cog"></span><span class="about_text parametres"> PARAMETRES</span></a></li>
+						<li><a href="#" id="about_link2"><span class="glyphicon glyphicon-info-sign"></span><span class="about_text aPropos"> A PROPOS</span></a></li>
+						<li><a href="#" id="alerte_link2"><span class="glyphicon glyphicon-alert"></span><span class="about_text alerte"> SIGNALEMENT ALERTE</span></a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+        <div id="mainApp" class="container-fluid">
+			<div id="rowAccueil" class="row text-center">
+				<img id="iconAlerte" src="img/bell.svg" hidden></img>
+				<div id="mainFrameMessageAlerte" hidden>
+					<div id="rowMessageAlerte">
+						<img id="iconAlerteFond" src="img/alerte.png"></img>
+						<span></span>
+					</div>
+				</div>
+				<span>
+					<div class="menuBox">
+						<div id="proxi_link" class="couleur_tc menuContent">
+						<svg xmlns="http://www.w3.org/2000/svg" width="45%" height="45%" color="#ffffff" viewBox="0 0 113 113">
+							<path fill-rule="nonzero" fill="currentColor" d="M 47.31,92.00 C 47.31,92.00 31.34,54.00 31.34,54.00 28.95,47.10 25.02,36.20 25.51,29.00 26.08,20.72 28.91,13.16 35.17,7.47 49.36,-5.45 74.31,-1.78 83.65,15.00 86.11,19.42 87.15,23.98 87.49,29.00 87.97,36.07 84.30,46.25 82.00,53.00 82.00,53.00 67.86,87.00 67.86,87.00 65.16,93.10 59.91,105.08 56.00,110.00 56.00,110.00 47.31,92.00 47.31,92.00 Z M 55.00,43.43 C 68.52,45.21 74.79,26.34 62.91,19.57 59.65,17.71 56.56,17.91 53.00,18.42 38.73,23.54 42.23,41.75 55.00,43.43 Z" />
+						</svg>
+						<span class="autourDeMoi">AUTOUR DE MOI</span></div> 
+					</div>
+					<div class="menuBox">
+						<div id="horaires_link" class="couleur_conseil menuContent">
+						<svg xmlns="http://www.w3.org/2000/svg" height="45%" width="45%" version="1.1" color="#ffffff" viewBox="0 0 72 64">
+							<path fill-rule="nonzero" fill="currentColor" d="m65.169,49.149,0-35.911c0-6.2708-4.9539-11.356-11.062-11.356h-2.5589v-0.055298c-0.000147-1.0088-0.79715-1.8267-1.7801-1.8267h-24.733c-0.98288,0-1.779,0.81793-1.779,1.8267v0.055892h-4.3935c-6.1085,0-11.062,5.0848-11.062,11.355v35.911c0,6.2721,4.9539,11.356,11.062,11.356h3.6071v1.3987c0.002,1.158,0.917,2.096,2.045,2.096h0.1036c1.1287,0,2.0448-0.93789,2.0448-2.098v-1.3973h21.217v1.3987c0,1.158,0.914,2.096,2.045,2.096h0.1036c1.1287,0,2.0421-0.93789,2.0421-2.0966v-1.3987h2.0366c6.1085,0,11.062-5.0834,11.062-11.356m-5.293-17.253c0,13.246-10.461,23.984-23.364,23.984-12.904,0-23.365-10.739-23.365-23.984,0-13.246,10.461-23.984,23.365-23.984,12.903,0,23.364,10.738,23.364,23.984m-20.725,0c0-1.4968-1.1819-2.7087-2.6392-2.7087-1.4586,0-2.6392,1.2119-2.6392,2.7087s1.1805,2.7087,2.6392,2.7087c1.4573,0,2.6392-1.2119,2.6392-2.7087m-2.639-4.407c0.6966,0,1.3537,0.17585,1.9358,0.47985v-12.764c0-1.186-1.0074-1.8949-1.9644-1.8949-0.95697,0-1.9644,0.70887-1.9644,1.8949v12.791c0.59572-0.32172,1.2732-0.50711,1.993-0.50711m-0.6857,8.7532c-1.2978-0.21675-2.402-1.0279-3.0345-2.1552l-5.5823,7.5917c-0.66252,0.97061-0.33126,2.0734,0.45259,2.6378,0.78385,0.56437,1.9071,0.50575,2.5697-0.46485l5.5946-7.6094z"/>
+						</svg>
+						<span class="horaires">HORAIRES</span></div>
+					</div>
+					<div class="menuBox">
+						<div id="iti_link" class="couleur_velo menuContent">
+							<svg xmlns="http://www.w3.org/2000/svg" width="45%" height="45%" version="1.1" color="#ffffff" viewBox="0 0 72 64">
+								<g transform="translate(4.46395e-7,-9.9584668e-6)"><g transform="matrix(0.67716969,0,0,-0.67716969,-27.767005,106.77558)"><g transform="translate(63.6215,156.1859)"><path fill-rule="nonzero" fill="currentColor" d="M0,0c-12.489,0-22.617-9.822-22.617-21.933,0-12.112,22.617-56.307,22.617-56.307s22.617,44.192,22.617,56.307c0,12.114-10.125,21.933-22.617,21.933m0-31.669c-5.542,0-10.038,4.361-10.038,9.736s4.496,9.735,10.038,9.735c5.545,0,10.038-4.36,10.038-9.735s-4.493-9.736-10.038-9.736"/></g><g transform="translate(134.3014,156.1858)"><path fill-rule="nonzero" fill="currentColor" d="M0,0c-7.195,0-13.028-5.657-13.028-12.635s13.028-32.436,13.028-32.436,13.028,25.458,13.028,32.436-5.833,12.635-13.028,12.635m0-18.245c-3.193,0-5.784,2.513-5.784,5.61,0,3.098,2.591,5.608,5.784,5.608s5.784-2.51,5.784-5.608c0-3.097-2.591-5.61-5.784-5.61"/></g><g transform="translate(104.8383,64.6449)"><path fill-rule="nonzero" fill="currentColor" d="m0,0-41.563,0,0,6.189,35.374,0,0,29.083,35.305,0,0-6.189h-29.116v-29.083z"/></g></g></g>
+							</svg>
+						<span class="itineraire">ITINERAIRE</span></div> 
+					</div>
+					<div class="menuBox">
+						<div id="infoTrafic_link" class="couleur_voiture menuContent">
+						<svg xmlns="http://www.w3.org/2000/svg" width="45%" height="45%" version="1.1" color="#ffffff" viewBox="0 0 61 58">
+							<path fill-rule="nonzero" fill="currentColor" d="M 39.78,13.00 C 39.78,13.00 55.75,43.00 55.75,43.00 57.06,45.60 60.88,52.14 60.19,54.85 59.25,58.53 53.90,57.99 51.00,58.00 51.00,58.00 10.00,58.00 10.00,58.00 7.10,57.99 1.75,58.53 0.81,54.85 0.09,52.04 4.82,43.80 6.26,41.00 6.26,41.00 21.22,13.00 21.22,13.00 23.46,8.75 25.00,3.46 29.20,0.84 35.43,0.39 37.30,8.30 39.78,13.00 Z M 21.74,28.00 C 21.74,28.00 10.00,51.00 10.00,51.00 10.00,51.00 51.00,51.00 51.00,51.00 51.00,51.00 31.00,12.00 31.00,12.00 31.00,12.00 21.74,28.00 21.74,28.00 Z M 32.73,36.85 C 32.26,38.20 31.20,39.87 29.54,38.83 27.28,37.41 26.56,25.69 27.31,23.15 27.88,21.22 27.97,21.91 28.59,21.04 36.53,18.32 34.14,32.78 32.73,36.85 Z M 31.70,48.34 C 28.51,49.61 24.88,45.28 29.28,41.84 35.56,41.36 34.19,47.36 31.70,48.34 Z" />
+						</svg>
+						<span class="infoTrafic">INFO TRAFIC</span></div> 
+					</div>
+					<div class="menuBox" style="display:none;">
+						<div id="notif_link" class="couleur_horaires menuContent">
+						<svg xmlns="http://www.w3.org/2000/svg" width="45%" height="45%" version="1.1" color="#ffffff" viewBox="0 0 64 59">
+							<path fill-rule="nonzero" fill="currentColor" d="M 31.00,0.78 C 41.29,5.19 42.89,18.95 34.81,25.35 31.69,27.83 27.84,28.16 24.00,27.96 8.71,27.16 5.36,6.04 21.00,0.78 24.43,-0.04 27.67,-0.35 31.00,0.78 Z M 58.00,2.00 C 58.00,2.00 58.00,8.00 58.00,8.00 58.00,8.00 64.00,8.00 64.00,8.00 64.00,8.00 64.00,13.00 64.00,13.00 64.00,13.00 58.00,13.00 58.00,13.00 58.00,13.00 58.00,20.00 58.00,20.00 58.00,20.00 53.00,20.00 53.00,20.00 53.00,20.00 53.00,13.00 53.00,13.00 53.00,13.00 46.00,13.00 46.00,13.00 46.00,13.00 46.00,8.00 46.00,8.00 46.00,8.00 53.00,8.00 53.00,8.00 53.00,8.00 53.00,2.00 53.00,2.00 53.00,2.00 58.00,2.00 58.00,2.00 Z M 5.53,42.17 C 16.20,29.81 38.18,31.24 47.03,45.00 49.90,49.46 50.76,53.81 51.00,59.00 51.00,59.00 0.00,59.00 0.00,59.00 0.06,52.34 0.99,47.43 5.53,42.17 Z" />
+						</svg>
+						<span class="monCompte">MON COMPTE</span></div>
+					</div>
+					<div class="menuBox">
+						<div id="atmo_link" class="couleur_atmo menuContent">
+						<svg id="iconeatmo" viewBox="0 0 64 64" font-size="60px" stroke-width="6px" version="1.1" width="45%" height="45%" font-weight="bold" font-family="Arial" xmlns="http://www.w3.org/2000/svg" style="text-anchor:middle;" title="Indice atmosphérique : Bon" alt="Indice atmosphérique : Bon">
+							<g transform="matrix(3.1445716,0,0,-3.6819972,54.083605,40.399661)"><title>Indice atmosphérique : Bon</title><path d="m0,0c0.266,0.377,0.423,0.835,0.423,1.329,0,1.284-1.05,2.324-2.346,2.324-0.398,0-0.772-0.099-1.101-0.273-1.001,1.078-2.435,1.753-4.029,1.751-2.27-0.003-4.215-1.377-5.04-3.33-0.036,0-0.072,0.005-0.109,0.005-2.092,0-3.79-1.681-3.79-3.756,0-1.991,1.565-3.615,3.541-3.743v-0.011h11.403v0.009c1.574,0.098,2.821,1.392,2.821,2.975,0,1.212-0.728,2.251-1.773,2.72" fill="#fff" fill-rule="nonzero" style="fill:currentColor"/></g><text fill="#fff" x="28" y="60" class="svgNumLigne" transform="scale(1.0730654,0.93190964)" font-size="28px" style="fill: rgb(255, 255, 255);">?</text>
+						</svg>
+						<svg id="iconeAlerteAtmo" style="display:none;" version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="13%" height="13%" viewBox="0 0 111.21 107.5" enable-background="new 0 0 111.21 107.5" xml:space="preserve"><circle fill="#FF931E" cx="55.21" cy="54" r="52"/><g><rect x="50.209" y="28.997" fill="#FFFFFF" width="10.001" height="30.003"/><rect x="50.209" y="69.002" fill="#FFFFFF" width="10.001" height="10.001"/></g></svg>
+						<span class="atmo">ATMO</span></div>
+					</div>
+					<div class="menuBox">
+						<div id="fav_link" class="couleur_horairesTR menuContent">
+						<svg xmlns="http://www.w3.org/2000/svg" width="45%" height="45%" version="1.1" color="#ffffff" viewBox="0 0 61 59">
+							<path fill-rule="nonzero" fill="currentColor" d="M 44.10,14.11 C 49.45,17.84 57.16,15.78 59.98,20.28 64.44,27.39 54.13,33.37 51.64,38.83 48.79,45.07 57.50,60.60 44.00,58.79 42.50,58.58 41.39,58.21 40.00,57.65 37.42,56.62 34.76,54.87 32.00,54.43 25.43,53.38 18.69,61.27 12.23,58.40 6.14,55.70 10.97,45.42 9.93,40.72 8.50,34.25 0.89,31.44 0.16,25.00 -1.01,14.55 11.45,18.81 17.79,13.43 22.21,9.69 21.52,5.41 27.10,1.02 38.25,-2.72 37.34,9.39 44.10,14.11 Z M 20.00,21.99 C 16.97,23.81 13.37,24.15 10.00,25.00 17.58,35.94 19.51,36.00 17.00,50.00 17.00,50.00 32.00,46.11 32.00,46.11 32.00,46.11 44.00,50.00 44.00,50.00 41.49,36.00 43.42,35.94 51.00,25.00 39.25,22.03 36.19,20.96 31.00,9.00 27.01,14.01 26.13,18.31 20.00,21.99 Z" />
+						</svg>
+						<span class="favoris">FAVORIS</span></div> 
+					</div>
+				</span>
+            </div>
+			<div id="popupMap" style="display:none;"></div>
+			<div id="popupZA" class="template hidden">
+				<div class="row icones text-nowrap">
+					<span class="col-xs-4 arret"><span class="glyphicon glyphicon-screenshot"></span><span class="libelle" id="libelleArret">&nbsp;arrets</span></span>
+					<span class="col-xs-4 dep"><span class="glyphicon glyphicon-map-marker"></span><span class="libelle" id="libelleDepart"> départ<br>itinéraire</span></span>
+					<span class="col-xs-4 arr"><span class="glyphicon glyphicon-map-marker"></span><span class="libelle" id="libelleArrivee"> arrivée<br>itinéraire</span></span>
+				</div>
+				<div class="passages">
+					<div class="row"><span class="col-xs-12 header" id="passagesHoraires">Horaires</span></div>
+					<div class="row ligne">
+						<div class="logoLigne"></div>
+						<div class="dir1"><span class="libDir"></span><div class="pull-right"><div class="delai pull-left"><span></span><br><span></span></div><a href="#" class="pull-right"><span class="glyphicon glyphicon-list-alt"></span></a></div></div>
+						<div class="dir2"><span class="libDir"></span><div class="pull-right"><div class="delai pull-left"><span></span><br><span></span></div><a href="#" class="pull-right"><span class="glyphicon glyphicon-list-alt"></span></a></div></div>
+						<div class="evt"></div>
+					</div>
+				</div>
+			</div>
+			<img id="wait" src="img/wait.gif" alt="recherche en cours" title="recherche en cours"></img>
+			<div id="rowMapIti" class="row" style="display:none;" >
+				<div id="mapIti"></div>
+				<div class="layerSwitcher">
+					<div class="layersPanel">
+						<div class="close-switcher pull-right"><span class="glyphicon glyphicon-minus"></span></div>
+						<div class="pull-left afficher">Afficher : </div><br>
+						<div class="bases list-unstyled text-left"></div>
+						<ul class="layers list-unstyled text-left"></ul>
+					</div>
+				</div>
+				<div id="itineraire">
+					<div id="itiParams" class="panel panel-default">
+						<div class="panel-heading" id="panel-heading-itineraire">
+							<a id="togglePanelsParams" class="pull-left btn btn-link no-h-padding no-v-padding" href="#"><span class="glyphicon glyphicon-resize-small"></span></a>
+							<h6 class="panel-title text-center">Itinéraire</h6>
+						</div>
+						<div class="panel-body">
+							<div id="itiMainParams">
+								<div class="col-xs-11">
+									<div class="input-group">
+										<label class="control-label sr-only" for="dep">Départ</label>
+										<span id="geoloc" class="input-group-addon"><span class="glyphicon glyphicon-screenshot"></span></span>
+										<input id="dep" data-lonlat="0,0" type="text" class="form-control hasclear" autocomplete="off" placeholder="Arrêt ou adresse de départ"/>
+										<span class="saisie_clear glyphicon glyphicon-remove"></span>
+									</div>
+								</div>
+								<div id="itiMainParamsButton"  class="col-xs-1 text-center">
+									<button type="button" id="iti-params-inverse" class="btn btn-default btn-xs" title="Inverse le départ et l'arrivée" alt="Inverse le départ et l'arrivée">
+										<span class="glyphicon glyphicon-sort"></span>
+									</button>
+								</div>
+								<div class="clearfix"></div>
+								<div class="col-xs-11">
+									<div class="input-group">
+										<label class="control-label sr-only" for="arr">Arrivée</label>
+										<span class="input-group-addon"><span class="glyphicon glyphicon-map-marker"></span></span>
+										<input id="arr" data-lonlat="0,0" type="text" class="form-control hasclear" autocomplete="off" placeholder="Arrêt ou adresse d'arrivée"/>
+										<span class="saisie_clear glyphicon glyphicon-remove"></span>
+									</div>
+								</div>
+							</div>
+							<div id="itiOptions">
+								<div class="row">
+									<form class="form-inline" role="form">
+											<div class='input-group date col-xs-12 col-lg-4' id='datepickerIti'>
+												<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+												<input type='text' class="form-control datepicker-readonly" readonly="readonly"/>
+											</div>
+											<div class="clearfix"></div>
+											<div class="input-group col-xs-6 col-lg-4 pull-left"  id='apavpicker'>
+												<select id="ap_av" class="form-control">
+													<option value="D">Partir après</option>
+													<option value="A">Arriver avant</option>
+												</select>
+											</div>
+											<div class='input-group date col-xs-6 col-lg-4 pull-right' id='timepickerIti'>
+												<input type='text' class="form-control datepicker-readonly" readonly="readonly"/>
+												<span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+											</div>
+											<div class="clearfix"></div>
+									</form>
+								</div>
+								<div id="allModes" class="row">
+									<div id="ongletsPietonPmr" class="input-group input-group-sm col-xs-12" data-toggle="checkbox">
+										<div id="ongletPieton" class="active col-xs-6">
+											<img id="imgPieton" src="img/pieton_noir.svg" title="Piéton" alt="Piéton"/>
+										</div>
+										<div  id="ongletPmr" class="col-xs-6">
+											<img id="imgPmr" src="img/pmr_noir.svg" title="Personne à mobilité réduite" alt="Personne à mobilité réduite"/>
+										</div>
+									</div>
+									<div id="modes" class="active col-xs-12" data-toggle="checkbox">
+										<ul id="transit" class="col-xs-offset-2 col-xs-2">
+											<input id="transitInput" type="checkbox" checked="checked" value="transit"></input><br>
+											<label for="transitInput"><img src="img/tc_blanc.svg" title="Transports en commun" alt="Transports en commun"/></label>
+										</ul>
+										<ul id="transit_pmr" style="display:none" class="col-xs-offset-3 col-xs-2" for="transit_pmrInput">
+											<input id="transit_pmrInput" type="checkbox" checked="checked" value="transit_pmr"></input><br>
+											<label for="transit_pmrInput"><img src="img/tc_pmr_blanc.svg" title="Transports en commun" alt="Transports en commun"/></label>
+											
+										</ul>
+										<ul id="bike" class="col-xs-2" for="bikeInput">
+											<input id="bikeInput" type="checkbox" checked="checked" value="bike"></input><br>
+											<label for="bikeInput"><img src="img/velo_blanc.svg" title="Vélo" alt="Vélo"/></label>
+										</ul>
+										<ul id="walk" class="col-xs-2" for="walkInput">
+											<input id="walkInput" type="checkbox" checked="checked" value="walk"></input><br>
+											<label for="walkInput"><img src="img/pieton_blanc.svg" title="Piéton" alt="Piéton"/></label>
+										</ul>
+										<ul id="pmr" style="display:none" class="col-xs-2" for="pmrInput">
+											<input id="pmrInput" type="checkbox" checked="checked" value="pmr" disabled="disabled"></input><br>
+											<label for="pmrInput"><img id="imgPmr" src="img/pmr_blanc.svg" title="Personne à mobilité réduite" alt="Personne à mobilité réduite"/></label>
+										</ul>
+										<ul id="car" class="col-xs-2" for="carInput">
+											<input id="carInput" type="checkbox" value="car"></input><br>
+											<label for="carInput"><img src="img/voiture_blanc.svg" title="Voiture" alt="Voiture"/></label>
+										</ul>										
+									</div>
+								</div>
+							</div>
+							<button type="button" id="calculer" class="btn btn-default col-xs-6 col-xs-offset-3">Calculer</button>
+							<div id="bookmarkIti"></div>
+						</div>
+					</div>
+					<div id="iti" class="collapse panel panel-default" style="display:none;">
+						<div class="panel-heading" id="panel-heading-resultats">
+						<a id="togglePanelsResultats" class="pull-left btn btn-link no-h-padding no-v-padding" href="#"><span class="glyphicon glyphicon-resize-small"></span></a>
+						<h6 class="panel-title text-center">Résultats</h6></div>
+						<div id="panel-heading-resultats-precedent" title="Calcul et affiche les itinéraires précédents" alt="Calcul et affiche les itinéraires précédents">
+							<div class="text-center"><div class="glyphicon glyphicon glyphicon-chevron-up"></div></div>
+							<div class="text-center" id="iti-dep-prec">Départ précédent</div>
+						</div>
+						<ul class="template hidden">
+							<li class="list-group-item no-v-padding">
+								<div class="row">
+									<div class="col-xs-12">
+										<div class="row headIti">
+											<span class="hdep col-xs-4"><span class="hPrefixCourt visible-xs-inline">De</span><span class="hPrefixLong hidden-xs">Départ</span><span class="heure">00:00</span></span>
+											<span class="harr col-xs-4"><span class="hPrefixCourt visible-xs-inline">A</span><span class="hPrefixLong hidden-xs">Arrivée</span><span class="heure">00:00</span></span>
+											<span class="duree ellipsis col-xs-4">0 min</span>
+										</div>
+										<div class="row">
+											<div class="resultat col-xs-12 lien-details" href="#" title="Détails de l'itinéraire" alt="Détails de l'itinéraire">
+												<ul class="legs btn-group btn-group-justified pull-left"></ul>
+												<div class="" ><span class="glyphicon glyphicon-chevron-right"></span></div>
+											</div>
+											<div class="co2 btn-link col-xs-5" title="CO2 émis" alt="CO2 émis"><a href="#"></a></div>
+											<div class="traffic ellipsis btn-link col-xs-5">trafic :<a href="#"></a></div>
+										</div>
+									</div>
+								</div>
+							</li>
+							<li class="btn WALK"><figure><img title="Piéton" alt="Piéton" class="logoMode" src="img/blank.png"/><figcaption class="from"></figcaption></figure></li>
+							<li class="btn BICYCLE"><figure><img title="Vélo" alt="Vélo" class="logoMode" src="img/blank.png"/><figcaption class="from"></figcaption></figure></li>
+							<li class="btn BUS TRAM RAIL"><figure><img title="Transports en commun" alt="Transports en commun" class="logoMode" src="img/blank.png"/><figcaption class="from"></figcaption></figure></li>
+							<li class="btn CABLE_CAR"><figure><img title="Bulles de Grenoble" alt="Bulles de Grenoble" class="logoMode" src="img/blank.png"/><figcaption class="from"></figcaption></figure></li>
+							<li class="btn CAR"><figure><img title="Voiture"  alt="Voiture" class="logoMode" src="img/blank.png"/><figcaption class="from"></figcaption></figure></li>
+						</ul>
+						<ul class="list-group">
+						</ul>
+						<div id="panel-footer-resultats-suivant" title="Calcul et affiche les itinéraires suivants" alt="Calcul et affiche les itinéraires suivants">
+							<div class="text-center" id="iti-dep-suiv">Départ suivant</div>
+							<div class="text-center"><div class="glyphicon glyphicon glyphicon-chevron-down"></div></div>
+						</div>
+					</div>
+					<div id="itiDetails" class="collapse panel panel-default" style="display:none;">
+						<div class="panel-heading hidden-print" id="panel-heading-details">
+							<a class="lien-resultats pull-left" href="#"><span class="glyphicon glyphicon-chevron-left"></span><span>Retour aux resultats</span></a>
+							<h6 class="panel-title text-center"><span>Détails</span></h6>
+							 <div class="template hidden">
+								<div class="leg BICYCLE">
+									<div class="text-right text-v-top">
+										<span class="text-v-top text-nowrap">
+											<span class="hdep"></span>
+											<img title="Vélo" alt="Vélo" class="logoMode" src="img/blank.png"/>
+										</span>
+									</div>
+									<div class="border-left text-v-middle">
+										<span class="duree ellipsis">0 min</span>
+									</div>
+									<div>
+										<div class="row steps"></div>
+										<div class="row profil"><div class="col-xs-12"><canvas width="200" height="100"></canvas></div></div>
+									</div>
+								</div>
+								<div class="leg CAR">
+									<div class="text-right text-v-top">
+										<span class="text-v-top text-nowrap">
+											<span class="hdep"></span>
+											<img title="Voiture" alt="Voiture" class="logoMode" src="img/blank.png"/>
+										</span>
+									</div>
+									<div class="border-left text-v-middle">
+										<span class="duree ellipsis">0 min</span>
+									</div>
+									<div>
+										<div class="row steps"></div>
+										<div class="row info">
+											<a class="cov" style="display:none;" href="#"><img src="img/blank.png"/></a>
+										</div>
+										<div class="row profil"><div class="col-xs-12"><canvas width="200" height="100"></canvas></div></div>
+									</div>
+								</div>
+								<div class="leg WALK">
+									<div class="text-right text-v-top">
+										<span class="text-v-top text-nowrap">
+											<span class="hdep"></span>
+											<img title="Piéton" alt="Piéton" class="logoMode" src="img/blank.png"/>
+										</span>
+									</div>
+									<div class="border-left text-v-middle">
+										<span class="duree ellipsis">0 min</span>
+									</div>
+									<div>
+										<div class="row steps"></div>
+										<div class="row profil"><div class="col-xs-12"><canvas width="200" height="100"></canvas></div></div>
+									</div>
+								</div>
+								<div class="leg BUS TRAM RAIL">
+									<div class="text-right text-v-top">
+										<span class="text-v-top text-nowrap">
+											<span class="hdep"></span>
+											<img title="Transports en commun" alt="Transports en commun" class="logoMode" src="img/blank.png"/>
+										</span>
+									</div>
+									<div class="border-left text-v-middle">
+										<span class="duree ellipsis">0 min</span>
+									</div>
+									<div>
+										<div class="row steps"></div>
+										<div class="row info">
+											<a class="flexo" style="display:none;" href="javascript:void(0)"><img src="img/blank.png"/></a>
+										</div>
+									</div>
+								</div>
+								<div class="leg CABLE_CAR">
+									<div class="text-right text-v-top">
+										<span class="text-v-top text-nowrap">
+											<span class="hdep"></span>
+											<img title="Bulles de Grenoble" alt="Bulles de Grenoble" class="logoMode" src="img/blank.png"/>
+										</span>
+									</div>
+									<div class="border-left text-v-middle">
+										<span class="duree ellipsis">0 min</span>
+									</div>
+									<div>
+										<div class="row steps"></div>
+									</div>
+								</div>
+								<span class="col-xs-12 step"></span>
+							 </div>
+						</div>
+						<div class="panel-body" id="details-panel-body">
+							<div class="container-fluid">
+								<div class="row headIti">
+										<span class="hdep col-xs-4">00:00</span>
+										<span class="harr col-xs-4">00:00</span>
+										<span class="duree col-xs-4">0 min</span>
+								</div>
+								<div class="row legs"></div>
+							</div>
+						</div>
+						<div class="panel-footer hidden-print">
+							<div class="row" id='detailFooter'>
+								<div class="col-xs-3"><div class="co2 btn-link" title="CO2 émis" alt="CO2 émis"><a href="#"></a></div></div>
+								<div class="traffic btn-link col-xs-4">trafic :<a href="#"></a></div>
+								<div class="col-xs-5" onclick="zoomCarte('mapIti'); activeLayer('itineraires');"><span class="glyphicon glyphicon-road"></span><span class='voirSurCarte'>Voir sur la carte</span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+            <div id="rowMapProxi" class="row" style="display:none;" >
+                <div id="mapProxi"></div>
+				<div class="layerSwitcher">
+					<div class="layersPanel">
+						<div class="close-switcher pull-right"><span class="glyphicon glyphicon-minus"></span></div>
+						<div class="pull-left afficher">Afficher : </div><br>
+						<div class="bases list-unstyled text-left"></div>
+						<ul class="layers list-unstyled text-left"></ul>
+					</div>
+				</div>
+			</div>
+            <div id="rowAlertes" class="row" style="display:none;">
+				<ul class="nav nav-tabs">
+				  <li id="tc_link" role="presentation" class="active col-xs-4"><a href="#">
+					<svg id="iconetc" viewBox="0 0 64 64" version="1.1" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" title="Transport en Commun : Service normal" alt="Transport en Commun : Service normal"><g transform="matrix(3.7037041,0,0,-3.3435658,48.629632,50.19573)"><title>Transport en Commun : Service normal</title><path class="iconeSVGFill" style="fill:#5bb224; fill-rule: nonzero;" d="M 0,0 C -0.495,0.002 -0.9,0.407 -0.9,0.908 -0.9,1.405 -0.495,1.81 0,1.81 0.503,1.81 0.908,1.405 0.91,0.908 0.908,0.407 0.503,0.002 0,0 m -4.557,4.114 -4.794,0 C -9.82,4.11 -9.918,4.447 -9.87,4.785 l 0.493,3.55 c 0.068,0.428 0.213,0.712 0.776,0.716 h 4.037 4.185 C 0.181,9.047 0.328,8.763 0.397,8.335 L 0.893,4.785 C 0.934,4.447 0.836,4.11 0.371,4.114 H -4.557 z M -8.989,0 c -0.495,0.002 -0.9,0.407 -0.9,0.908 0,0.497 0.405,0.902 0.9,0.902 0.503,0 0.906,-0.405 0.91,-0.902 C -8.083,0.407 -8.486,0.002 -8.989,0 m 1.81,10.639 2.622,0 2.756,0 c 0.526,0.002 0.526,-0.791 0,-0.793 h -2.763 -2.615 c -0.529,0.002 -0.529,0.795 0,0.793 M 1.403,9.511 c -0.173,0.883 -0.738,1.237 -1.587,1.588 -0.831,0.35 -2.83,0.762 -4.307,0.775 -1.478,-0.013 -3.477,-0.425 -4.313,-0.775 -0.844,-0.351 -1.407,-0.705 -1.579,-1.588 L -11.02,4.626 v -5.935 h 1.095 V -2.36 c -0.004,-1.291 1.88,-1.291 1.882,0 v 1.051 h 3.479 0.007 3.621 V -2.36 c -0.002,-1.291 1.884,-1.291 1.882,0 v 1.051 H 2.04 V 4.626 L 1.403,9.511 z"/></g></svg>
+				  </a></li>
+				  <li id="traffic_link" role="presentation" class="col-xs-4"><a href="#">
+					<svg id="iconetrafic" viewBox="0 0 64 64" version="1.1" width="100%" height="100%"  xmlns="http://www.w3.org/2000/svg" title="Trafic : Fluide" alt="Trafic : Fluide"><g><g transform="matrix(3.5772001,0,0,-3.9405119,54.032151,36.729142)"><path class="iconeSVGFill" style="fill:#5bb224; fill-rule: nonzero;" d="M 0,0 0,0.1 C 0.046,0.089 0.093,0.083 0.143,0.083 c 0.279,0 0.507,0.164 0.507,0.367 0,0.204 -0.228,0.368 -0.507,0.368 -0.278,0 -0.504,-0.164 -0.504,-0.368 0,-0.003 0.001,-0.006 0.001,-0.011 0,-0.003 -0.001,-0.007 -0.001,-0.009 V 0.174 c -0.017,0.006 -0.034,0.011 -0.052,0.016 -0.293,2.762 -2.575,4.913 -5.35,4.913 -2.748,0 -5.014,-2.113 -5.341,-4.839 V 0.43 0.439 0.45 c 0,0.204 -0.226,0.368 -0.506,0.368 -0.279,0 -0.505,-0.164 -0.505,-0.368 0,-0.199 0.218,-0.359 0.488,-0.366 -0.383,-0.201 -0.783,-0.619 -0.782,-1.259 V -4.44 h 1.044 v -1.042 c -0.002,-1.285 1.958,-1.27 1.957,0 v 1.042 h 3.528 3.519 v -1.042 c 0.005,-1.27 1.964,-1.285 1.966,0 V -4.44 H 0.65 v 3.265 C 0.646,-0.613 0.337,-0.221 0,0 m -10.355,-2.47 c -0.501,-10e-4 -0.906,0.385 -0.905,0.862 -10e-4,0.48 0.404,0.867 0.905,0.863 0.499,0.004 0.904,-0.383 0.904,-0.863 0,-0.477 -0.406,-0.863 -0.904,-0.862 m 0.416,2.686 c 0.165,2.291 1.898,3.856 4.176,3.856 2.279,0 4.012,-1.565 4.177,-3.856 h -8.353 z m 8.534,-2.686 c -0.502,-10e-4 -0.909,0.385 -0.912,0.862 0.003,0.48 0.41,0.867 0.912,0.863 0.496,0.004 0.901,-0.383 0.905,-0.863 -0.004,-0.477 -0.409,-0.863 -0.905,-0.862"/></g></g></svg>
+				  </a></li>
+				  <li id="parking_link" role="presentation" class="col-xs-4"><a href="#">
+					<svg id="iconeparking" height="100%" width="100%" version="1.1" viewBox="0 -16 80 80" ><circle id="circle3" r="92.5" cy="-1954.67" cx="1202.111" fill="#1E2882" /><path id="path5" d="M1215.908-2013.677h-45.895v118.014h26.226v-39.338h19.669c21.699,0,39.338-17.636,39.338-39.338 S1237.607-2013.677,1215.908-2013.677z M1217.221-1961.226h-20.981v-26.226h20.981c7.209,0,13.113,5.9,13.113,13.113  S1224.43-1961.226,1217.221-1961.226z" fill="#FFFFFF" /><circle id="circle7" r="92.5" cy="-1954.67" cx="1202.111" fill="#1E2882" /><path id="path9" d="M1215.908-2013.677h-45.895v118.014h26.226v-39.338h19.669c21.699,0,39.338-17.636,39.338-39.338  S1237.607-2013.677,1215.908-2013.677z M1217.221-1961.226h-20.981v-26.226h20.981c7.209,0,13.113,5.9,13.113,13.113  S1224.43-1961.226,1217.221-1961.226z" fill="#FFFFFF" /><ellipse style="fill:#1e2882" ry="32.161018" rx="31.889832" id="circle11" cy="32.330006" cx="31.805916" /><path style="fill:#ffffff" id="path13" d="m 37.46508,7.9331695 -21.65447,0 0,49.4038255 12.374387,0 0,-16.467941 9.280554,0 c 10.238384,0 18.561109,-7.382902 18.561109,-16.467942 0,-9.08504 -8.323197,-16.4679425 -18.56158,-16.4679425 z m 0.619521,21.9569775 -9.900075,0 0,-10.97807 9.899604,0 c 3.40147,0 6.187193,2.469898 6.187193,5.489035 0,3.019136 -2.785251,5.489035 -6.186722,5.489035 z" /></svg>
+				  </a></li>
+				</ul>
+				<div id="contenus">
+					<div id="rowMapTraffic" style="display:none;" >
+						<div id="mapTraffic"></div>
+						<div class="layerSwitcher">
+							<div class="layersPanel">
+								<div class="close-switcher pull-right"><span class="glyphicon glyphicon-minus"></span></div>
+								<div class="pull-left afficher">Afficher : </div><br>
+								<div class="bases list-unstyled text-left"></div>
+								<ul class="layers list-unstyled text-left"></ul>
+							</div>
+						</div>
+					</div>
+					<div id="rowParking" style="display:none;" class="col-xs-12">
+						<div id="modeleParking" style="display:none;" class="row">
+							<ul>
+								<li id="PKG_A_REMPLACER" data-lonlat="0,0" class="ligneParking list-unstyled row">
+									<span class="nomParking col-xs-6"></span>
+									<span class="col-xs-2"><div class="favo"></div></span>
+									<span class="dispo col-xs-2"></span>
+									<span class="total col-xs-2"></span>
+									<div class="detailParking col-xs-12" style="display:none;"> 
+										<span  class="adresseParking col-xs-10"></span>
+										<span class="syRendre col-xs-2">
+											<!--<span class="glyphicon glyphicon-share-alt" title="aller à ce parking"></span>-->
+											<span><img src="img/direction.svg"/></span>
+										</span>  
+								    </div>
+								</li>
+							</ul>
+						</div>	
+						<!--construction entete du tableau des parkings-->
+						<div id="entetePkg" class="row">	
+							<span class="libelleEnteteParking col-xs-6">Parking</span>
+							<span class="libelleEntetefavori  col-xs-2 text-left"></span>
+							<span class="libelleEntetedispo   col-xs-2 text-left">dispo</span>
+							<span class="libelleEntetetotal   col-xs-2 text-left">total</span>
+						</div>
+						<!--construction du tableau des parkings-->
+						<ul id="PkgRows">
+						</ul>
+						<!--construction entete du tableau des P+R-->
+						<div  id="entetePar" class="row">
+							<span class="libelleEnteteParking col-xs-6">P+R</span>
+							<span class="libelleEntetefavori  col-xs-2 text-left"></span>
+							<span class="libelleEntetedispo   col-xs-2 text-left">dispo</span>
+							<span class="libelleEntetetotal   col-xs-2 text-left">total</span>
+						</div>
+						<!--construction du tableau des P+R-->
+						<ul id="ParcRows">
+						</ul>
+						
+						<div id="timesyncPKG">
+							<span class="glyphicon glyphicon-refresh" title="Mise à l'heure courante"></span><span class="sr-only">Rafraichir</span>
+						</div>
+					</div>
+					<div id="divEvtsTC">
+						<div id="timesyncEvtsTC">
+							<span class="glyphicon glyphicon-refresh" title="Mise à l'heure courante"></span><span class="sr-only">Rafraichir</span>
+						</div>
+						<div class="listeEvts evtsTC anchor SEM">
+							<h4><img src="img/logo_SEM.png" class="logoSEM"/></h4>
+							<hr>
+						</div>
+						<br>
+						<div class="listeEvts evtsTC anchor SNC">
+							<h4><img src="img/logo_SNC.png" class="logoSNC"/></h4>
+							<hr>
+						</div>
+						<br>
+						<div class="listeEvts evtsTC anchor C38">
+							<h4><img src="img/logo_C38.png" class="logoC38"/></h4>
+							<hr>
+						</div>
+						<br>
+					</div>
+				</div>
+			</div>
+			<div id="rowAtmo" class="row" style="display:none;">
+						<div id="updateAtmoAucun" style="display:none;">Désolé nous n'avons pas des données pour le moment</div>
+												
+						<div id="updatePicDePolDemain">
+							<p id="titrePicDePolDemain"></p>
+							<p id="commentairePicDePolDemain"></p>
+						</div>
+						<div id="updatePicDePol">
+							<p id="titrePicDePol"></p>
+							<p id="commentairePicDePol"></p>
+						</div>
+						<div id="updateAtmo">
+							<div id="updateAtmoIcone"><svg id="iconeatmo" viewBox="0 0 64 64" font-size="60px" stroke-width="6px" version="1.1" width="64" height="64" font-weight="bold" font-family="Arial" xmlns="http://www.w3.org/2000/svg" style="text-anchor:middle;" title="Indice atmosphérique : Bon" alt="Indice atmosphérique : Bon"><g transform="matrix(3.1445716,0,0,-3.6819972,54.083605,40.399661)"><title>Indice atmosphérique : Bon</title><path d="m0,0c0.266,0.377,0.423,0.835,0.423,1.329,0,1.284-1.05,2.324-2.346,2.324-0.398,0-0.772-0.099-1.101-0.273-1.001,1.078-2.435,1.753-4.029,1.751-2.27-0.003-4.215-1.377-5.04-3.33-0.036,0-0.072,0.005-0.109,0.005-2.092,0-3.79-1.681-3.79-3.756,0-1.991,1.565-3.615,3.541-3.743v-0.011h11.403v0.009c1.574,0.098,2.821,1.392,2.821,2.975,0,1.212-0.728,2.251-1.773,2.72" fill="#a9a9a9" fill-rule="nonzero" style="fill:currentColor"/></g><text fill="#a9a9a9" x="28" y="60" class="svgNumLigne" transform="scale(1.0730654,0.93190964)" font-size="28px" style="fill: rgb(255, 255, 255);">?</text></svg></div>
+							<span id="dateHeure"></span>
+							<p id="polluantAtmo"></p>							
+							<p id="commentaireAtmo"></p>							
+						</div>
+						<div id="updateAtmoDemain">
+							<span id="dateHeureDemain"></span>
+						</div>
+						<div id="updateAtmoCarto"><div id="updateAtmoCartoImg"><img src="#"/></div></div>
+			</div>
+			<div id="rowAtmoCarto" class="row" style="display:none;">
+				<div id="mapAtmo"></div>
+				<div class="layerSwitcher">
+					<div class="layersPanel">
+						<div class="close-switcher pull-right"><span class="glyphicon glyphicon-minus"></span></div>
+						<div class="pull-left afficher">Afficher : </div><br>
+						<div class="bases list-unstyled text-left"></div>
+						<ul class="layers list-unstyled text-left"></ul>
+					</div>
+				</div>
+			</div>
+            <div id="rowNotif" class="row" style="display:none;" >
+				<ul class="nav nav-tabs">
+				  <li id="push_link" role="presentation" class="active col-xs-6"><a href="#">Notifications</a></li>
+				  <li id="conf_link" role="presentation" class="col-xs-6"><a href="#">Mes alertes</a></li>
+				</ul>
+				<div id="contenusNotifs">
+					<div id="listeNotifs"></div>
+					<div id="listeTrajets" style="display:none;">
+						<div id="divTrajet"></div>
+					</div>
+				</div>
+            </div>
+            <div id="rowRegisterNotif" class="row" style="display:none;" >
+                <form role="form">
+                    <p id="bonjourSIV" class="help-block">Pour utiliser ce service, vous devez, au préalable, créer un compte dans la rubrique "Mon compte" du site <a href='https://www.metromobilite.fr' target='_blank'>www.metromobilite.fr</a></p>
+					<div class="form-group" id="bonjourSIVId">
+                        <label for="userRegNotif">Votre identifiant ou email</label>
+                        <input id="userRegNotif" class="form-control" type="text" placeholder="Entrez votre identifiant ou email" autocapitalize="off" autocorrect="off">
+                    </div>
+                    <div class="form-group"id="bonjourSIVPwd">
+                        <label for="pwdRegNotif">Votre mot de passe</label>
+                        <input id="pwdRegNotif" class="form-control" type="password"  placeholder="Entrez votre mot de passe"/>
+                    </div>
+                    <a id="registerNotif_link" href="#" class="btn btn-default col-xs-offset-4 col-xs-4" role="button">Valider</a>
+					<div class="clearfix"></div>
+                    <p class="help-block">En cliquant sur le bouton "Valider" vos alertes seront redirigées vers ce téléphone.</p>
+                </form>
+            </div>
+            <div id="rowFavoris" class="row" style="display:none;">
+				<div id="rowFavorisLigne" class="col-xs-12"></div>
+				<div id="rowFavorisParking" class="col-xs-12"></div>
+				<div id="rowFavorisCam" class="col-xs-12"></div>
+				<div id="rowFavorisIti" class="col-xs-12"></div>
+				<div id="rowFavorisAucun" class="col-xs-12"></div>
+				<div id="timesyncFav">
+					<span class="glyphicon glyphicon-refresh" title="Mise à l'heure courante"></span><span class="sr-only">Rafraichir</span>
+				</div>
+            </div>
+            <div id="rowHoraires" class="row" style="display:none;" >
+				<ul class="nav nav-tabs">
+				  <li id="prochainsPassages_link" role="presentation" class="active col-xs-6"><a href="#">
+				  <svg id="iconeprochainspassages" viewBox="0 -8 64 64" version="1.1" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" title="Prochains passages" alt="Prochains passages"><g><circle class="iconeSVGFill" fill="#fff" cx="20.018" cy="48.458" r="6.258"/><path class="iconeSVGFill" fill="#fff" d="M13.759,10.047v8.125c20.182,0,36.545,16.364,36.545,36.544h8.124 C58.428,30.057,38.418,10.047,13.759,10.047z M13.759,26.295v8.125c11.195,0,20.296,9.1,20.296,20.295h8.124 C42.179,39.012,29.461,26.295,13.759,26.295z"/></g></svg>
+				  </a></li>
+				  <li id="horairesStatics_link" role="presentation" class="col-xs-6"><a href="#">
+				  <svg version="1.1" id="iconeprochainspassages" xmlns="http://www.w3.org/2000/svg"  x="0px" y="0px" width="100%" height="100%" viewBox="0 -16 1024 768" title="Fiches horaires" alt="Fiches horaires"><path class="iconeSVGFill" fill="#fff" d="M740.256,181.5H287.23c-40.304,0-72.913,24.492-72.913,54.633V671.29c0,30.198,32.688,54.632,72.913,54.632 h61.425v15.781c0,13.885,10.631,25.15,23.723,25.15h1.214c13.091,0,23.721-11.267,23.721-25.15v-15.781h246.745v15.781c0,13.885,10.631,25.15,23.723,25.15h1.213c13.092,0,23.721-11.267,23.721-25.15v-15.781h47.543c40.303,0,72.912-24.492,72.912-54.632V236.133C813.168,205.933,780.48,181.5,740.256,181.5z"/><circle fill="#000" cx="513.742" cy="447.327" r="213.021"/><path class="iconeSVGFill" fill="#fff" d="M508.562,492.64c-11.347-1.952-21.025-9.283-26.578-19.517l-48.952,68.707c-5.816,8.807-2.913,18.725,3.966,23.881c6.879,5.101,16.74,4.569,22.533-4.205L508.562,492.64z"/><path class="iconeSVGFill" fill="#fff" d="M513.98,413.463c6.117,0.008,11.899,1.587,16.979,4.34V301.968c0-10.711-8.807-17.138-17.217-17.138c-8.409,0-17.216,6.402-17.216,17.138v115.834c5.236-2.284,11.107-3.967,17.455-3.967"/><path class="iconeSVGFill" fill="#fff" d="M541.312,453.332c0-16.106-12.377-29.197-27.609-29.197c-15.154,0-27.53,13.091-27.53,29.197c0,16.105,12.377,29.196,27.61,29.196C528.936,482.528,541.312,469.438,541.312,453.332"/><path class="iconeSVGFill" fill="#fff" d="M726.764,199.098c0,13.255-10.745,24-24,24H324.721c-13.255,0-24-10.745-24-24v-28.496 c0-13.255,10.745-24,24-24h378.042c13.255,0,24,10.745,24,24V199.098z"/></svg>
+				  </a></li>
+				</ul>
+				<div id="contenuHoraires">
+					<div id="modele" style="display:none;">
+						<ul>
+							<li><a id='id' class="svgLigne pull-left">
+							</a></li>
+						</ul>
+						<div data-code="" class="ligne contenu">
+							<div class="tableau"></div>
+						</div>
+						<div data-code="" class="ligne onglet">
+							<span class="modeLigne"></span>
+							<span class="numLigne"></span>
+							<span class="groupeArret hidden">&nbsp;|&nbsp;
+								<span data-code="" class="arret"></span>
+								<span class="caret" ></span>
+							</span>
+							<div class="bookmark"></div>
+						</div>
+						<div class="horaires contenu">
+							<div class="horairesTextLigne" style="display:none;"></div>
+							<div class="direction dir1 active"></div>
+							<div class="direction dir2"></div>
+							<div class="alertTextLigne cellEvenement" style="display:none;">
+								<div id="trianglewarning">
+									<svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" version="1.1" color="#ff0000" viewBox="0 0 61 58">
+										<path fill-rule="nonzero" fill="currentColor" d="M 39.78,13.00 C 39.78,13.00 55.75,43.00 55.75,43.00 57.06,45.60 60.88,52.14 60.19,54.85 59.25,58.53 53.90,57.99 51.00,58.00 51.00,58.00 10.00,58.00 10.00,58.00 7.10,57.99 1.75,58.53 0.81,54.85 0.09,52.04 4.82,43.80 6.26,41.00 6.26,41.00 21.22,13.00 21.22,13.00 23.46,8.75 25.00,3.46 29.20,0.84 35.43,0.39 37.30,8.30 39.78,13.00 Z M 21.74,28.00 C 21.74,28.00 10.00,51.00 10.00,51.00 10.00,51.00 51.00,51.00 51.00,51.00 51.00,51.00 31.00,12.00 31.00,12.00 31.00,12.00 21.74,28.00 21.74,28.00 Z M 32.73,36.85 C 32.26,38.20 31.20,39.87 29.54,38.83 27.28,37.41 26.56,25.69 27.31,23.15 27.88,21.22 27.97,21.91 28.59,21.04 36.53,18.32 34.14,32.78 32.73,36.85 Z M 31.70,48.34 C 28.51,49.61 24.88,45.28 29.28,41.84 35.56,41.36 34.19,47.36 31.70,48.34 Z" />
+									</svg>
+									<span class> </span>
+								</div>
+							</div>
+						</div>
+						<div class="ficheHoraire">
+							<div class="boutonsHoraires" style="display:none;">
+								<a href="#" class="btn btn-horaires ficheHoraireEvenement" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" version="1.1" color="#ff0000" viewBox="0 0 61 58"><path fill-rule="nonzero" fill="currentColor" d="M 39.78,13.00 C 39.78,13.00 55.75,43.00 55.75,43.00 57.06,45.60 60.88,52.14 60.19,54.85 59.25,58.53 53.90,57.99 51.00,58.00 51.00,58.00 10.00,58.00 10.00,58.00 7.10,57.99 1.75,58.53 0.81,54.85 0.09,52.04 4.82,43.80 6.26,41.00 6.26,41.00 21.22,13.00 21.22,13.00 23.46,8.75 25.00,3.46 29.20,0.84 35.43,0.39 37.30,8.30 39.78,13.00 Z M 21.74,28.00 C 21.74,28.00 10.00,51.00 10.00,51.00 10.00,51.00 51.00,51.00 51.00,51.00 51.00,51.00 31.00,12.00 31.00,12.00 31.00,12.00 21.74,28.00 21.74,28.00 Z M 32.73,36.85 C 32.26,38.20 31.20,39.87 29.54,38.83 27.28,37.41 26.56,25.69 27.31,23.15 27.88,21.22 27.97,21.91 28.59,21.04 36.53,18.32 34.14,32.78 32.73,36.85 Z M 31.70,48.34 C 28.51,49.61 24.88,45.28 29.28,41.84 35.56,41.36 34.19,47.36 31.70,48.34 Z" /></svg></a>
+								<a href="#" class="btn btn-horaires ficheHoraireInfos" style="display:none;"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30px" height="30px"><title>Informations</title><path d="M0 0h24v24H0z" fill="none"/><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></a>
+								<a href="#" class="btn btn-horaires ficheHorairePdf" target="_blank" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg></a>
+							</div>
+							<span class="horairesText"></span>
+							<div class="horairesTextInfos cellEvenement" style="display:none;"></div>
+							<div class="horairesEvtLigne cellEvenement" style="display:none;"></div>
+							<div class="matable">
+								<table>
+									<thead>
+										<tr>
+											<td colspan="6">
+												<div class="navHoraires">
+													<a href="#" class="btn btn-horaires horairesPrecedents"><svg width="30px" height="30px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></a>
+													<a href="#" class="btn btn-horaires horairesSuivants"><svg width="30px" height="30px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></a>
+													<div class="boutonDirection">
+														<a href="#" class="btn btn-horaires ficheHoraireDirection"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 48 48"><title>Changement de direction</title><path d="M16,13.98V28h4V13.98h6L18,6l-8,7.98H16z M30,42l8-7.98h-6V20h-4v14.02h-6L30,42z"/></svg></a>
+														<span><span class="directionLabel">Direction : </span><span class="directionText"></span></span>
+													</div>
+												</div>
+											</td>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
+						<div class="passage">
+							<div class="destination">
+								<span class="texte">Stationmobile</span>
+							</div>
+							<div class="delai">
+								<span class="texte">0 min</span>
+								<img class="logoRss" alt="" src="img/rss.png"/>
+							</div>
+						</div>
+					</div>
+					<div id="liste">
+						<div id="listeMain">
+							<div id="listeLignes" class="col-xs-12">
+								<div id="TAG" class="row titreReseau"><h4>Réseau TAG</h4></div>
+								<div class="row TRAM"></div>
+								<div class="row CHRONO"></div>
+								<div class="row PROXIMO"></div>
+								<div class="row FLEXO"></div>
+								<div id="C38" class="row titreReseau"><h4>Réseau Transisère</h4></div>
+								<div class="row C38"></div>
+							</div>
+						</div>
+					</div>
+				   <div id="mainView">
+						<div id="centre">
+							<h1 id="titrePPassage" class="sr-only">Prochains passages</h1>
+							<div id="ppOnglets"></div>
+							<div id="pp">
+								<span id="horairesTextStatique" class="hidden-xs">Sélectionnez la ligne dans le panneau de gauche</span>
+							</div>
+							<div id="timesyncPP">
+								<span class="glyphicon glyphicon-refresh" title="Mise à l'heure courante"></span><span class="sr-only">Rafraichir</span>
+							</div>
+						</div>
+					</div>
+					<div id="mainViewStatique" style="display:none;">
+						<h1 id="titreHoraires" class="sr-only">Horaires</h1>
+						<div>
+							<form id="dates" role="form">
+								<div id="datepickerStatique">
+									<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+									<input type='text' class="form-control datepicker-readonly" readonly="false"/>
+								</div>
+								<div id="timepickerStatique">
+										<span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+										<input type='text' class="form-control datepicker-readonly" readonly="false"/>
+								</div>
+							</form>
+						</div>
+							
+						<div id="horairesOnglets"></div>
+						<div id="horaires">
+							<span id="horairesText" class="hidden-xs">Sélectionnez la ligne dans le panneau de gauche</span>
+						</div>
+					</div>
+				</div>
+            </div>
+			<div id="rowParam" class="row" style="display:none;">
+				<div class="container">
+					<h4 id="moncompte">Mon Compte</h4>
+					<div class="col-xs-12">
+						<div class="btn-group col-xs-8" role="group" aria-label="...">
+									<button type="button" id="notificationOff" class="btn btn-default"><span class="glyphicon glyphicon-volume-off"></span></button>
+									<button type="button" id="notificationVibrates" class="btn btn-default"><span class="glyphicon glyphicon glyphicon-flash"></span></button>
+									<button type="button" id="notificationOn" class="btn btn-default"><span class="glyphicon glyphicon-volume-up"></span></button>
+						</div>
+						<div id="divNotificationDescription"></div>
+					</div>
+					<h4 id="langage">Langage</h4>
+					<div class="col-xs-12">
+						<select id="langageSelector" class="form-control col-xs-8">
+							<option value="fr">Français</option>
+							<option value="us">Anglais</option>
+						</select>
+					</div>					
+					<h4 id="selhoraires">Horaires</h4>
+					<div class="col-xs-12">
+						<select id="horairesSelector" class="form-control col-xs-8">
+							<option selected value="tri-default">Tri selon l'ordre du parcours</option>
+							<option value="tri-oa">Tri par ordre alphabétique</option>
+						</select>
+					</div>					
+					<h4 id="pagedemarrage">Page de démarrage</h4>
+						<div class="col-xs-12">
+							<select id="startSelector" class="form-control col-xs-8">
+								<option selected value="start-accueil">Accueil</option>
+								<option value="start-autour">Autour de moi</option>
+								<option value="start-horaires">Horaires</option>
+								<option value="start-itineraire">Itinéraire</option>
+								<option value="start-tc">Info trafic TC</option>
+								<option value="start-routier">Info trafic Routier</option>
+								<option value="start-parking">Info trafic Parking</option>
+								<option value="start-atmo">Atmo</option>
+								<option value="start-favoris">Favoris</option>
+							</select>
+						</div>
+				</div>
+			</div>
+			<div id="rowAbout" class="row" style="display:none;" >
+				<div id="rowAboutContainer" class="">
+					<div id="mainAbout">
+						<h4>MétroMobilité</h4>
+						<hr>
+						<p>Une application de Grenoble Alpes Métropole</p></br>
+						<span class="mainAboutCreditT">Crédits techniques: </span><a class="mainAboutCreditTa" href="https://www.metromobilite.fr/pages/conditions.html#creditsTechniques" target="_blank">Mentions légales</a></br></br>
+						<span class="mainAboutCreditD">Crédits de données: </span><a class="mainAboutCreditDa" href="https://www.metromobilite.fr/pages/conditions.html#creditsDonnees" target="_blank">Mentions légales</a></br></br>
+						<span class="mainAboutSiteW">Site web : </span><a href="https://www.metromobilite.fr" target="_blank">www.metromobilite.fr</a></br></br>
+						<span class="mainAboutFAQ"></span><a href="https://www.metromobilite.fr/pages/FAQ.html" target="_blank">FAQ Metromobilité</a></br></br>
+						<span class="mainAboutContact">Contact : </span><a class="mainAboutContacta" id="alerteMailAbout" href="#">Envoyer un email</a></br></br>
+						<span class="mainAboutVersion">Version : </span><span id='versionAbout'>3.0.0</span></br></br>
+						<hr>
+						<span class="mainAboutpreprod" id='preprod' style="display:none;color:red;"> !! ATTENTION VOUS ETES EN MODE TEST !! CLIQUEZ ICI POUR REVENIR AU MODE STANDARD</span></br></br>
+					</div>
+				</div>
+			</div>
+			<div id="divAlerte" class="row text-center" style="display:none;">
+						<h4>Pour signaler un évènement à Métromobilité, veuillez renseigner le formulaire ci-dessous et éventuellement prendre une photo.</h4>
+						<div id="alerteType" class="btn-group btn-group-sm" data-toggle="buttons">
+							<label class="btn btn-primary active">
+								<input type="radio" name="options" id="alerteTypeAccident" autocomplete="off">Accident</label>
+							<label class="btn btn-success">
+								<input type="radio" name="options" id="alerteTypeBouchon" autocomplete="off">Bouchon</label>
+							<label class="btn btn-warning">
+								<input type="radio" name="options" id="alerteTypeObstacle" autocomplete="off">Obstacle</label>
+							<label class="btn btn-danger">
+								<input type="radio" name="options" id="alerteTypeAutre" autocomplete="off">Autre</label>
+						</div>
+						<div id="alerteMessage" class="input-group col-xs-12">
+							<textarea class="form-control" rows="3" placeholder="Description de l'évènement" aria-describedby="basic-addon1"></textarea>
+						</div>
+						<div id="alertePosition" class="input-group input-group-xs readonly" data-toggle="checkbox" style="visibility:hidden;">
+							<input type="checkbox" value="pos"> Inclure ma position</input>
+						</div>
+						<div id="alerteNoPosition" class="input-group input-group-xs readonly" data-toggle="checkbox">
+							<input type="checkbox" value="pos"> Afin de pouvoir inclure votre position, activer le service de localisation puis, appuyer ici.</input>
+						</div>
+						<div id="alertePhoto">
+							<button class="btn btn-danger" alt="Prendre une photo" title="Prendre une photo"><span class="glyphicon glyphicon-camera"></span> Prendre une photo</button>
+						</div>
+						<div id="alerteMail">
+							<button  class="btn btn-primary btn-lg" alt="Envoyer par mail" title="Envoyer par mail"><span class="glyphicon glyphicon-envelope"></span> Envoyer par mail</button>
+						</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="cordova.js"></script>
+		<script type="text/javascript" src="js/soapclient21.js"></script>
+		<script type="text/javascript" src="js/lib/winstore-jscompat.js"></script>
+		<!--<script type="text/javascript" src="js/lib/jquery-3.1.0.min.js"></script> Attention des modif code à prevoir-->
+		<script type="text/javascript" src="js/lib/jquery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="js/lib/jquery-ui-1.12.0.js"></script>
+		<script type="text/javascript" src="js/lib/jquery.ui.touch-punch.min.js"></script>
+		<script type="text/javascript" src="js/lib/jquery.touchSwipe.min.js"></script>
+		<script type="text/javascript" src="js/bsp/js/moment-with-locales.min.js"></script>
+		<script type="text/javascript" src="js/bsp/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/bsp/js/bootstrap3-typeahead.min.js"></script>
+		<script type="text/javascript" src="js/bsp/js/bootstrap-datetimepicker.min.js"></script>
+		<script type="text/javascript" src="js/lib/curve.min.js"></script>
+		<script type="text/javascript" src="js/lib/ol/ol-custom.js"></script>
+		<script type="text/javascript" src="js/piwik.js"></script>
+		<script type="text/javascript" src="js/outils.js"></script>
+		<script type="text/javascript" src="js/fr.js"></script>
+		<script type="text/javascript" src="js/loginSIV.js"></script>
+		<script type="text/javascript" src="js/favoris.js"></script>
+		<script type="text/javascript" src="js/prochainsPassages.js"></script>
+		<script type="text/javascript" src="js/initPages.js"></script>
+		<script type="text/javascript" src="js/carte.js"></script>
+		<script type="text/javascript" src="js/iti.js"></script>
+		<script type="text/javascript" src="js/surcharges.js"></script>
+		<script type="text/javascript" src="js/index.js"></script>
+		
+		<!--<script type="text/javascript" src="js/lib/ol/polyfill.js"></script>-->
+    </body>
+</html>
